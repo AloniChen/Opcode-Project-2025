@@ -29,4 +29,9 @@ class Courier:
     def __str__(self):
         """Return formatted courier info."""
         return (f"Courier(name={self.name}, ID={self.courier_id}, "
+                f"address={self.address}, current location={self.current_location})")
+
+    def str_courier(self):
+        """Return formatted courier info."""
+        return (f"Courier(name={self.name}, ID={self.courier_id}, "
                 f"address={self.address}, current location={self.current_location}, password={self.password})")
