@@ -15,3 +15,14 @@ def find_order_by_package_id(package_id):
         print(f"Order {package_id} not found")
     except FileNotFoundError:
         print("Orders file not found")
+
+def view_orders():
+    try:
+        with open("orders.json", "r") as file:
+            orders = json.load(file)
+        for order in orders:
+                print(f"Package ID: {order['package_id']}, Customer: {order['customer_id']}, "
+                      f"Courier: {order['courier_id']}, Route: {order['origin']} → {order['destination']}, "
+                      f"tatus: {order['status']}")
+    except FileNotFoundError:
+        print("Orders file not found")
