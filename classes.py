@@ -4,13 +4,17 @@ from typing import Dict, Any, List
 
 class Order:
     _json_filename = "orders.json"
-    def __init__(self, package_id, customer_id, courier_id, origin, destination):
+    def __init__(self, package_id, customer_id, courier_id, origin, destination, status="confirmed"):
         self._package_id = package_id
         self._customer_id = customer_id
         self._courier_id = courier_id
         self._origin = origin
         self._destination = destination
+        self._status = status
         self._order_to_json()           #save to JSON file
+
+    def __str__(self):
+        return f"Order(package_id={self._package_id}, customer_id={self._customer_id}, courier_id={self._courier_id}, origin={self._origin}, destination={self._destination}, status={self._status})"
 
     def _order_to_json(self):
         try:
@@ -40,4 +44,5 @@ class Order:
             "courier_id": self._courier_id,
             "origin": self._origin,
             "destination": self._destination,
+            "status": self._status,
         }
