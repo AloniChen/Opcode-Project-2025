@@ -4,8 +4,10 @@ from typing import Dict, Any, List
 
 class Order:
     _json_filename = "orders.json"
+    _package_number = 1
     def __init__(self, package_id, customer_id, courier_id, origin, destination, status="confirmed"):
-        self._package_id = package_id
+        self._package_id = Order._package_number
+        Order._package_number += 1
         self._customer_id = customer_id
         self._courier_id = courier_id
         self._origin = origin
