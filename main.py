@@ -4,7 +4,7 @@ from pathlib import Path
 dispatch = DispatchSystem(Path("addresses.json"))
 
 # Add a new address
-address_id = dispatch.add_address({
+address = dispatch.add_address({
     "street": "Herzl",
     "house_number": 10,
     "city": "Tel Aviv",
@@ -13,4 +13,4 @@ address_id = dispatch.add_address({
 })
 
 # Show it
-print(dispatch.get_address_by_id(address_id))
+print(address)

@@ -10,14 +10,14 @@ class DispatchSystem:
         # self.order_repo = OrderRepository(...)
         # self.courier_repo = CourierRepository(...)
 
-    def add_address(self, address_data: dict) -> int:
+    def add_address(self, address_data: dict) -> Address:
         """
         Creates and stores a new Address from dictionary data.
         Returns the new address ID.
         """
         new_address = Address(**address_data)
         self.address_repo.add(new_address)
-        return new_address.id
+        return new_address
 
     def get_address_by_id(self, address_id: int):
         return self.address_repo.get_by_id(address_id)
