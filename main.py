@@ -1,16 +1,16 @@
-# This is a sample Python script.
+from dispatch_system import DispatchSystem
+from pathlib import Path
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+dispatch = DispatchSystem(Path("addresses.json"))
 
+# Add a new address
+address_id = dispatch.add_address({
+    "street": "Herzl",
+    "house_number": 10,
+    "city": "Tel Aviv",
+    "postal_code": "12345",
+    "country": "Israel"
+})
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Show it
+print(dispatch.get_address_by_id(address_id))
