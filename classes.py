@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 COURIER_JSON = "courier.json"
 
+
 @dataclass
 class Courier:
     """
@@ -33,7 +34,7 @@ class Courier:
             "address_id": self.address_id,
             "current_location": self.current_location,
             "password": self.password}
-    
+
     @classmethod
     def from_dict(cls, data: Dict) -> 'Courier':
         """Creates a Courier object from a dictionary."""
@@ -57,7 +58,8 @@ class Courier:
         except FileNotFoundError:
             return []
         except json.JSONDecodeError:
-            print(f"Warning: {json_file} is empty or contains invalid JSON. Starting with empty data.")
+            print(
+                f"Warning: {json_file} is empty or contains invalid JSON. Starting with empty data.")
             return []
 
     @staticmethod
@@ -136,14 +138,16 @@ class Courier:
         """
         all_couriers_data = cls._load_all_from_json()
         initial_count = len(all_couriers_data)
-        all_couriers_data = [d for d in all_couriers_data if d['courier_id'] != courier_id]
+        all_couriers_data = [
+            d for d in all_couriers_data if d['courier_id'] != courier_id]
 
         if len(all_couriers_data) < initial_count:
             cls._save_all_to_json(all_couriers_data)
             print(f"Courier with ID {courier_id} deleted successfully.")
             return True
         else:
-            print(f"Error: Courier with ID {courier_id} not found for deletion.")
+            print(
+                f"Error: Courier with ID {courier_id} not found for deletion.")
             return False
 
     @classmethod
