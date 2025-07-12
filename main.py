@@ -1,12 +1,22 @@
 from customer import Customer
-from customerList import add_or_update_customer, get_customer_by_id, update_customer, delete_customer
+from customerList import add_customer, get_customer_by_id, update_customer, delete_customer
 
-# יצירת לקוח חדש
+
+def save_customer(customer_dict):
+    existing = get_customer_by_id(customer_dict["customer_id"])
+    if existing:
+        update_customer(customer_dict)
+        print("customer has been updated")
+    else:
+        add_customer(customer_dict)
+        print("new customer has been added")
+
+# Create new customer
 cust = Customer("Chen", 1, "050-1234567", "aaa@example.com", "mypassword", 150)
 cust.add_address("Tel Aviv")
-add_or_update_customer(cust.to_dict())
+save_customer(cust.to_dict())
 
-# עדכון כתובת ומספר טלפון ללקוח קיים
+# update address and phone number to an existin customer
 existing = get_customer_by_id(1)
 if existing:
     existing["phone_number"] = "050-9999999"

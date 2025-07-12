@@ -16,22 +16,17 @@ def save_customers(customers):
     with open(JSON_FILE, "w") as f:
         json.dump(customers, f, indent=4)
 
-def add_or_update_customer(customer_dict):
-    customers = load_customers()
-    for idx, existing_customer in enumerate(customers):
-        if existing_customer["customer_id"] == customer_dict["customer_id"]:
-            customers[idx] = customer_dict
-            break
-    else:
-        customers.append(customer_dict)
-    save_customers(customers)
-
 def get_customer_by_id(customer_id):
     customers = load_customers()
     for customer in customers:
         if customer["customer_id"] == customer_id:
             return customer
     return None
+
+def add_customer(customer_dict):
+    customers = load_customers()
+    customers.append(customer_dict)
+    save_customers(customers)
 
 def update_customer(updated_customer):
     customers = load_customers()
