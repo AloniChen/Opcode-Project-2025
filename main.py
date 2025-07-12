@@ -24,7 +24,7 @@ if existing:
         existing["address"].append("Beer Sheva")
     update_customer(existing)
 else:
-    print("הלקוח לא נמצא")
+    print("Customer is not found")
 
 delete_customer(1)
 
