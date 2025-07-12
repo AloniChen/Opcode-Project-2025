@@ -1,51 +1,52 @@
 import json
 from typing import Dict, Any, List, Union, Optional
+from dataclasses import dataclass
 
 COURIER_JSON = "courier.json"
 
+@dataclass
 class Courier:
     """
     Represents a courier with ID, name, password, location, and address.
     """
-
-    def __init__(self, name: str, courier_id: int,
-                 address_id: int, current_location: int, password: str):
-        """
-        Initialize Courier.
-        """
-        self.courier_id = courier_id
-        self.name = name
-        self.address_id = address_id
-        self.current_location = current_location
-        self.password = password
+    name: str
+    courier_id: int
+    address_id: int
+    current_location: int
+    password: str
 
     def __str__(self):
         """Return formatted courier info."""
         return (f"Courier(name={self.name}, ID={self.courier_id}, "
-                f"address={self.address}, current location={self.current_location})")
+                f"address_id={self.address_id}, current location={self.current_location})")
 
     def str_courier(self) -> str:
         """Return formatted courier info."""
         return (f"Courier(name={self.name}, ID={self.courier_id}, "
-                f"address={self.address}, current location={self.current_location}, password={self.password})")
+                f"address_id={self.address_id}, current location={self.current_location}, password={self.password})")
 
     def to_dict(self) -> Dict:
         """Converts the Courier object to a dictionary for JSON serialization."""
         return {
             "courier_id": self.courier_id,
             "name": self.name,
-            "address": self.address.id,
+            "address_id": self.address_id,
             "current_location": self.current_location,
             "password": self.password}
     
     @classmethod
-    def from_dict(cls, data: Dict) -> Courier:
+    def from_dict(cls, data: Dict) -> 'Courier':
         """Creates a Courier object from a dictionary."""
-        return cls(data["name"], data["courier_id"], data["password"],
-                   current_location, address)
+        return cls(
+            name=data["name"],
+            courier_id=data["courier_id"],
+            address_id=data["address_id"],
+            current_location=data["current_location"],
+            password=data["password"]
+        )
 
     @staticmethod
-    def _load_all_from_json(json_file: str = JSON_FILE) -> List[Dict]:
+    def _load_all_from_json(json_file: str = COURIER_JSON) -> List[Dict]:
         """
         Helper static method to load all raw courier dictionaries from the JSON file.
         Returns an empty list if the file doesn't exist or is invalid.
@@ -60,7 +61,7 @@ class Courier:
             return []
 
     @staticmethod
-    def _save_all_to_json(couriers_data: List[Dict], json_file: str = JSON_FILE):
+    def _save_all_to_json(couriers_data: List[Dict], json_file: str = COURIER_JSON):
         """
         Helper static method to save a list of raw courier dictionaries to the JSON file.
         """
@@ -81,7 +82,7 @@ class Courier:
         return True
 
     @classmethod
-    def get_courier_by_id(cls, courier_id: int) -> 'Courier':
+    def get_courier_by_id(cls, courier_id: int) -> Optional['Courier']:
         """
         Retrieves a courier by their ID from the JSON file.
         Returns the Courier object if found, otherwise None.
@@ -95,10 +96,10 @@ class Courier:
         return None
 
     @classmethod
-    def update_courier(cls, courier_id: int, new_data: Dict[str, Union[str, int, Address]]) -> bool:
+    def update_courier(cls, courier_id: int, new_data: Dict[str, Union[str, int]]) -> bool:
         """
         Updates an existing courier's information in the JSON file.
-        new_data can contain 'name', 'password', 'current_location', 'address'.
+        new_data can contain 'name', 'password', 'current_location', 'address_id'.
         Returns True if successful, False if the courier is not found.
         Note: This re-reads and re-writes the entire file for each operation.
         """
@@ -110,10 +111,10 @@ class Courier:
                     data['name'] = new_data['name']
                 if 'password' in new_data:
                     data['password'] = new_data['password']
-                if 'current_location' in new_data and isinstance(new_data['current_location'], Address):
-                    data['current_location'] = new_data['current_location'].to_dict()
-                if 'address' in new_data and isinstance(new_data['address'], Address):
-                    data['address'] = new_data['address'].to_dict()
+                if 'current_location' in new_data:
+                    data['current_location'] = new_data['current_location']
+                if 'address_id' in new_data:
+                    data['address_id'] = new_data['address_id']
                 all_couriers_data[i] = data
                 found = True
                 break
