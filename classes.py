@@ -74,8 +74,6 @@ class Courier:
     def create_courier(cls, courier: 'Courier') -> bool:
         """
         Adds a new courier to the JSON file.
-        Returns True if successful, False if a courier with the same ID already exists.
-        Note: This re-reads and re-writes the entire file for each operation.
         """
         all_couriers_data = cls._load_all_from_json()
         all_couriers_data.append(courier.to_dict())
@@ -130,7 +128,7 @@ class Courier:
             return False
 
     @classmethod
-    def delete_csourier(cls, courier_id: int) -> bool:
+    def delete_courier(cls, courier_id: int) -> bool:
         """
         Deletes a courier by their ID from the JSON file.
         Returns True if successful, False if the courier is not found.
@@ -158,3 +156,15 @@ class Courier:
         """
         all_couriers_data = cls._load_all_from_json()
         return [cls.from_dict(d) for d in all_couriers_data]
+
+    @classmethod
+    def courier_exists(cls, courier_id: int) -> bool:
+        """
+        Checks if a courier with the given ID already exists.
+        Returns True if the courier exists, False otherwise.
+        """
+        all_couriers_data = cls._load_all_from_json()
+        for data in all_couriers_data:
+            if data['courier_id'] == courier_id:
+                return True
+        return False
