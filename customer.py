@@ -15,11 +15,11 @@ class Customer:
     def __str__(self):
         return f"{self.name}, {self.customer_id}, {self.address}, {self.phone_number}, {self.email},  {self.password}, {self.credit}"
     
-    def to_dictionary(self):
+    def to_dict(self):
         return {
             "name": self.name,
             "customer_id": self.customer_id,
-            "address": self.address,
+            "address": self.address, #loop for list of IDs
             "phone_number": self.phone_number,
             "email": self.email,
             "password": self.password,
