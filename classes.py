@@ -1,0 +1,126 @@
+import json
+import os
+from typing import Dict, Any, List, Optional
+
+
+class Order:
+    _json_filename = "orders.json"
+    _package_number = 1
+    def __init__(self, customer_id, courier_id, origin, destination, package_id=0, status="confirmed",auto_save="True"):
+        if package_id==0:
+            self._package_id = Order._package_number
+            Order._package_number += 1
+        else:
+            self._package_id = package_id
+        self._customer_id = customer_id
+        self._courier_id = courier_id
+        self._origin_id = origin
+        self._destination_id = destination
+        self._status = status
+        # Only save to JSON if auto_save is True
+        if auto_save:
+            self.create()  # save to JSON file
+
+    def __str__(self):
+        return f"Order(package_id={self._package_id}, customer_id={self._customer_id}, courier_id={self._courier_id}, origin_id={self._origin_id}, destination_id={self._destination_id}, status={self._status})"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert order object to dictionary."""
+        return \
+        {
+            "package_id": self._package_id,
+            "customer_id": self._customer_id,
+            "courier_id": self._courier_id,
+            "origin_id": self._origin_id,
+            "destination_id": self._destination_id,
+            "status": self._status,
+        }
+
+    def _load_orders(self) -> List[Dict[str, Any]]:
+        """Load orders from JSON file"""
+        try:
+            if os.path.exists(self._json_filename):
+                with open(self._json_filename, 'r', encoding='utf-8') as file:
+                    try:
+                        orders = json.load(file)
+                        if not isinstance(orders, list):
+                            return []
+                        return orders
+                    except json.JSONDecodeError:
+                        return []
+            else:
+                return []
+        except Exception as e:
+            print(f"Error loading orders: {e}")
+            return []
+
+    def _save_orders(self, orders: List[Dict[str, Any]]) -> bool:
+        """Save orders to JSON file"""
+        try:
+            with open(self._json_filename, 'w', encoding='utf-8') as file:
+                json.dump(orders, file, indent=2, ensure_ascii=False)
+            return True
+        except Exception as e:
+            print(f"Error saving orders: {e}")
+            return False
+
+    def create(self) -> bool:
+        """Create new order in JSON file"""
+        try:
+            orders = self._load_orders()
+            # Check for duplicate package_id
+            for existing_order in orders:
+                if existing_order.get("package_id") == self._package_id:
+                    return False
+            # Add new order
+            order_dict = self.to_dict()
+            orders.append(order_dict)
+            # Save to file
+            if self._save_orders(orders):
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"Error creating order: {e}")
+            return False
+
+
+    @classmethod
+    def update_by_package_id(cls, package_id, field_name: str, new_value) -> bool:
+        """Update an order by package_id without creating an object"""
+        try:
+            with open(cls._json_filename, 'r', encoding='utf-8') as file:
+                orders = json.load(file)
+            for order in orders:
+                if order.get("package_id") == package_id:
+                    order[field_name] = new_value
+                    with open(cls._json_filename, 'w', encoding='utf-8') as file:
+                        json.dump(orders, file, indent=2, ensure_ascii=False)
+                    return True
+            return False
+        except:
+            return False
+
+    @classmethod
+    def delete_by_package_id(cls, package_id: str) -> bool:
+        """Delete an order by package_id"""
+        try:
+            if not os.path.exists(cls._json_filename):
+                return False
+            with open(cls._json_filename, 'r', encoding='utf-8') as file:
+                orders = json.load(file)
+                if not isinstance(orders, list):
+                    return False
+            # Find and remove the order
+            original_count = len(orders)
+            orders = [order for order in orders if order.get("package_id") != package_id]
+            if len(orders) < original_count:
+                # Order was found and removed
+                with open(cls._json_filename, 'w', encoding='utf-8') as file:
+                    json.dump(orders, file, indent=2, ensure_ascii=False)
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"Error deleting order: {e}")
+            return False
