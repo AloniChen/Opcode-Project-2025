@@ -1,6 +1,6 @@
 import json
 from typing import List, Dict
-from classes import Order
+from order import Order
 
 _logger = logging.getLogger(__name__)
 
