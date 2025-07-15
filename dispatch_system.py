@@ -3,6 +3,8 @@ import logging
 from typing import List, Dict
 from classes import Courier
 
+from customer import Customer
+from customerList import add_customer, get_customer_by_id, update_customer
 from address_repository import AddressRepository
 from pathlib import Path
 from address import Address 
@@ -87,3 +89,11 @@ class DispatchSystem:
         except FileNotFoundError:
             print("Orders file not found")
             return None
+        def save_customer(self, customer_dict):
+        existing = get_customer_by_id(customer_dict["customer_id"])
+        if existing:
+            update_customer(customer_dict)
+            print("customer has been updated")
+        else:
+            add_customer(customer_dict)
+            print("new customer has been added")
