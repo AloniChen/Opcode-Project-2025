@@ -1,8 +1,8 @@
 import json
 import logging
 from typing import List, Dict
-from classes import Courier
-
+from courier import Courier
+from enum import Enum
 from customer import Customer
 from customerList import add_customer, get_customer_by_id, update_customer
 from address_repository import AddressRepository
@@ -12,6 +12,12 @@ from order import Order
 
 _logger = logging.getLogger(__name__)
 
+class PackageStatus(Enum):
+    CREATED = "created"
+    CONFIRMED = "confirmed"
+    DELIVERED = "delivered"
+    CANCELED = "canceled"
+    ON_DELIVERY = "on-delivery"
 
 class DispatchSystem:
     """
@@ -59,10 +65,17 @@ class DispatchSystem:
     def list_all_addresses(self):
         return self.address_repo.get_all()
 
-    def update_order_status(self, package_id, package_status) -> None:
-        Order.update_by_package_id(package_id, "status", package_status)
+    @staticmethod
+    def add_order(order_data: dict) -> Order:
+        new_order = Order(**order_data)
+        return new_order
 
-    def view_orders(self) -> List[Order]:
+    @staticmethod
+    def update_order_status(package_id, package_status: PackageStatus) -> None:
+        Order.update_by_package_id(package_id, "status", package_status.value)
+
+    @staticmethod
+    def view_orders() -> List[Order]:
         try:
             with open("orders.json", "r") as file:
                 orders = json.load(file)
@@ -75,7 +88,8 @@ class DispatchSystem:
             print("Orders file not found")
             return []
 
-    def find_order_by_package_id(self, package_id) -> Order:
+    @staticmethod
+    def find_order_by_package_id(package_id) -> Order:
         try:
             with open("orders.json", "r") as file:
                 orders = json.load(file)
