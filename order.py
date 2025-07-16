@@ -1,8 +1,14 @@
 import json
 import os
 from typing import Dict, Any, List, Optional
-from dispatch_system import PackageStatus
+from enum import Enum
 
+class PackageStatus(Enum):
+    CREATED = "created"
+    CONFIRMED = "confirmed"
+    DELIVERED = "delivered"
+    CANCELED = "canceled"
+    ON_DELIVERY = "on-delivery"
 
 class Order:
     _json_filename = "orders.json"

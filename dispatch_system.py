@@ -2,22 +2,16 @@ import json
 import logging
 from typing import List, Dict
 from courier import Courier
-from enum import Enum
 from customer import Customer
 from customerList import add_customer, get_customer_by_id, update_customer
 from address_repository import AddressRepository
 from pathlib import Path
 from address import Address 
 from order import Order
+from order import PackageStatus
+
 
 _logger = logging.getLogger(__name__)
-
-class PackageStatus(Enum):
-    CREATED = "created"
-    CONFIRMED = "confirmed"
-    DELIVERED = "delivered"
-    CANCELED = "canceled"
-    ON_DELIVERY = "on-delivery"
 
 class DispatchSystem:
     """
@@ -103,7 +97,7 @@ class DispatchSystem:
         except FileNotFoundError:
             print("Orders file not found")
             return None
-        def save_customer(self, customer_dict):
+    def save_customer(self, customer_dict):
         existing = get_customer_by_id(customer_dict["customer_id"])
         if existing:
             update_customer(customer_dict)
