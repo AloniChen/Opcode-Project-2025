@@ -1,14 +1,20 @@
 import json
 import os
 from typing import Dict, Any, List, Optional
+from enum import Enum
 
+class PackageStatus(Enum):
+    CREATED = "created"
+    CONFIRMED = "confirmed"
+    DELIVERED = "delivered"
+    CANCELED = "canceled"
+    ON_DELIVERY = "on-delivery"
 
 class Order:
     _json_filename = "orders.json"
     _package_number = 1
-
-    def __init__(self, customer_id, courier_id, origin, destination, package_id=0, status="confirmed", auto_save=True):
-        if package_id == 0:
+    def __init__(self, customer_id, courier_id, origin, destination, package_id=0, status=PackageStatus.CONFIRMED,auto_save=True):
+        if package_id==0:
             self._package_id = Order._package_number
             Order._package_number += 1
         else:

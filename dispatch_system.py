@@ -2,13 +2,17 @@ import json
 import logging
 from typing import List, Dict, Optional
 from courier import Courier
+
 from manager import Manager
+
 from customer import Customer
 from customerList import add_customer, get_customer_by_id, update_customer
 from address_repository import AddressRepository
 from pathlib import Path
 from address import Address
 from order import Order
+from order import PackageStatus
+
 
 _logger = logging.getLogger(__name__)
 
@@ -115,10 +119,17 @@ class DispatchSystem:
     def list_all_addresses(self):
         return self.address_repo.get_all()
 
-    def update_order_status(self, package_id, package_status) -> None:
-        Order.update_by_package_id(package_id, "status", package_status)
+    @staticmethod
+    def add_order(order_data: dict) -> Order:
+        new_order = Order(**order_data)
+        return new_order
 
-    def view_orders(self) -> List[Order]:
+    @staticmethod
+    def update_order_status(package_id, package_status: PackageStatus) -> None:
+        Order.update_by_package_id(package_id, "status", package_status.value)
+
+    @staticmethod
+    def view_orders() -> List[Order]:
         try:
             with open("orders.json", "r") as file:
                 orders = json.load(file)
@@ -131,7 +142,8 @@ class DispatchSystem:
             print("Orders file not found")
             return []
 
-    def find_order_by_package_id(self, package_id) -> Order:
+    @staticmethod
+    def find_order_by_package_id(package_id) -> Order:
         try:
             with open("orders.json", "r") as file:
                 orders = json.load(file)
