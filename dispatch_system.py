@@ -38,13 +38,25 @@ class DispatchSystem:
         with open(self.managers_file, "w") as file:
             json.dump(managers, file, indent=4)
 
-    def add_manager(self, manager: Manager) -> bool:
-
+    def add_manager(self, manager_dict: dict) -> bool:
+        """
+        Adds a new manager to the system.
+        Returns True if added successfully, False if manager already exists.
+        """
         managers = self._load_all_managers()
-        if any(m["manager_id"] == manager.manager_id for m in managers):
-            _logger.warning(f"Manager ID {manager.manager_id} already exists.")
+        if any(m["manager_id"] == manager_dict["manager_id"] for m in managers):
+            _logger.warning(
+                f"Manager ID {manager_dict['manager_id']} already exists.")
             return False
 
+        # Create a Manager object from the dict
+        manager = Manager(
+            manager_dict["name"],
+            manager_dict["manager_id"],
+            manager_dict["phone_number"],
+            manager_dict["email"],
+            manager_dict["password"]
+        )
         managers.append(manager.to_dict())
         self._save_all_managers(managers)
         _logger.info(f"Manager {manager.name} added successfully.")
@@ -61,11 +73,19 @@ class DispatchSystem:
     def list_all_managers(self) -> List[Manager]:
         return [Manager.from_dict(m) for m in self._load_all_managers()]
 
-    def add_courier(self, courier: Courier) -> bool:
+    def add_courier(self, courier_dict: dict) -> bool:
         """
         Adds a new courier to the system.
         Returns True if successful, False if the courier already exists.
         """
+        # צור אובייקט Courier מה־dict
+        courier = Courier(
+            courier_dict["name"],
+            courier_dict["courier_id"],
+            courier_dict["address_id"],
+            courier_dict["current_location"],
+            courier_dict["password"]
+        )
         if Courier.courier_exists(courier.courier_id):
             _logger.error(
                 f"Courier with ID {courier.courier_id} already exists")
@@ -134,3 +154,15 @@ class DispatchSystem:
         else:
             add_customer(customer_dict)
             print("new customer has been added")
+
+    def add_customer(self, customer_dict: dict) -> bool:
+        """
+        Adds a new customer to the system.
+        Returns True if added successfully, False if customer already exists.
+        """
+        existing = get_customer_by_id(customer_dict["customer_id"])
+        if existing:
+            # Customer already exists
+            return False
+        add_customer(customer_dict)
+        return True
