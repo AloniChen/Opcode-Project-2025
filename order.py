@@ -3,6 +3,7 @@ import os
 from typing import Dict, Any, List, Optional
 from enum import Enum
 
+
 class PackageStatus(Enum):
     CREATED = "created"
     CONFIRMED = "confirmed"
@@ -10,19 +11,21 @@ class PackageStatus(Enum):
     CANCELED = "canceled"
     ON_DELIVERY = "on-delivery"
 
+
 class Order:
     _json_filename = "orders.json"
     _package_number = 1
-    def __init__(self, customer_id, courier_id, origin, destination, package_id=0, status=PackageStatus.CONFIRMED,auto_save=True):
-        if package_id==0:
+
+    def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=0, status=PackageStatus.CONFIRMED, auto_save=True):
+        if package_id == 0:
             self._package_id = Order._package_number
             Order._package_number += 1
         else:
             self._package_id = package_id
         self._customer_id = customer_id
         self._courier_id = courier_id
-        self._origin_id = origin
-        self._destination_id = destination
+        self._origin_id = origin_id
+        self._destination_id = destination_id
         self._status = status
         # Only save to JSON if auto_save is True
         if auto_save:
@@ -40,7 +43,7 @@ class Order:
                 "courier_id": self._courier_id,
                 "origin_id": self._origin_id,
                 "destination_id": self._destination_id,
-                "status": self._status,
+                "status": self._status.value if hasattr(self._status, "value") else self._status,
             }
 
     def _load_orders(self) -> List[Dict[str, Any]]:

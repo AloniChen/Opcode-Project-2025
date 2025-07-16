@@ -1,5 +1,7 @@
 from dispatch_system import DispatchSystem
 
+from order import PackageStatus
+
 
 def main_menu():
     print("\n--- Delivery Management System ---")
@@ -187,24 +189,36 @@ def run_cli():
                         "origin_id": int(input("Origin Address ID: ")),
                         "destination_id": int(input("Destination Address ID: "))
                     }
-                    order = ds.create_order(data)
+                    order = ds.add_order(data)
                     print("Order created." if order else "Failed to create order.")
                 elif o_choice == "2":
                     package_id = int(input("Package ID: "))
-                    status = input("New Status: ")
-                    updated = ds.update_order_status(package_id, status)
-                    print("Status updated." if updated else "Order not found.")
+                    print("Choose new status:")
+                    status_options = list(PackageStatus)
+                    for idx, status in enumerate(status_options, 1):
+                        print(f"{idx}. {status.value}")
+                    status_choice = int(input("Enter status number: "))
+                    if 1 <= status_choice <= len(status_options):
+                        # שלח את ה-Enum עצמו
+                        status = status_options[status_choice - 1]
+                        updated = ds.update_order_status(package_id, status)
+                        print("Status updated." if updated else "Order not found.")
+                    else:
+                        print("Invalid status choice.")
                 elif o_choice == "3":
-                    package_id = int(input("Package ID: "))
-                    order = ds.track_order(package_id)
-                    print(order if order else "Order not found.")
+                    orders = ds.view_orders()
+                    if not orders:
+                        print("No orders found.")
+                    else:
+                        for order in orders:
+                            print(order)
                 elif o_choice == "4":
                     package_id = int(input("Package ID: "))
                     deleted = ds.delete_order(package_id)
                     print("Order deleted." if deleted else "Order not found.")
                 elif o_choice == "5":
                     package_id = int(input("Package ID: "))
-                    order = ds.get_order_by_id(package_id)
+                    order = ds.find_order_by_package_id(package_id)
                     print(order if order else "Not found.")
                 elif o_choice == "6":
                     break
