@@ -3,6 +3,7 @@ import os
 
 JSON_FILE = "customers.json"
 
+
 def load_customers():
     if not os.path.exists(JSON_FILE):
         return []
@@ -12,9 +13,11 @@ def load_customers():
         except json.JSONDecodeError:
             return []
 
+
 def save_customers(customers):
     with open(JSON_FILE, "w") as f:
         json.dump(customers, f, indent=4)
+
 
 def get_customer_by_id(customer_id):
     customers = load_customers()
@@ -23,10 +26,12 @@ def get_customer_by_id(customer_id):
             return customer
     return None
 
+
 def add_customer(customer_dict):
     customers = load_customers()
     customers.append(customer_dict)
     save_customers(customers)
+
 
 def update_customer(updated_customer):
     customers = load_customers()
@@ -36,6 +41,7 @@ def update_customer(updated_customer):
             save_customers(customers)
             return True
     return False
+
 
 def update_customer_address(customer_id, new_address=None, address_to_remove=None):
     customers = load_customers()
@@ -53,6 +59,7 @@ def update_customer_address(customer_id, new_address=None, address_to_remove=Non
 
     if updated:
         save_customers(customers)
+
 
 def delete_customer(customer_id):
     customers = load_customers()

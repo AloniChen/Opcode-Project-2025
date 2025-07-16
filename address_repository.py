@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Optional
 import itertools
 
+
 class AddressRepository:
     def __init__(self, path: Path):
         """
@@ -30,7 +31,8 @@ class AddressRepository:
 
     def save(self) -> None:
         with self.path.open("w", encoding="utf-8") as f:
-            json.dump([a.to_dict() for a in self.addresses], f, ensure_ascii=False, indent=4)
+            json.dump([a.to_dict() for a in self.addresses],
+                      f, ensure_ascii=False, indent=4)
 
     def add(self, address: Address) -> None:
         self.addresses.append(address)
@@ -60,16 +62,18 @@ class AddressRepository:
     def get_all(self) -> List[Address]:
         return self.addresses
 
+
 if __name__ == '__main__':
     repo = AddressRepository(Path("addresses.json"))
 
-    a1 = Address("Even Gvirol", 33, "Tel Aviv", "11111", "Israel", message="buzz 2")
-    repo.add(a1)  
+    a1 = Address("Even Gvirol", 33, "Tel Aviv",
+                 "11111", "Israel", message="buzz 2")
+    repo.add(a1)
 
     found = repo.get_by_id(a1.id)
     if found:
         print("Found:", found)
 
-    repo.update_by_id(a1.id, {"city": "Jerusalem"})  
+    repo.update_by_id(a1.id, {"city": "Jerusalem"})
 
-    repo.delete_by_id(a1.id)  
+    repo.delete_by_id(a1.id)
