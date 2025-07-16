@@ -3,6 +3,7 @@ import os
 
 JSON_FILE = 'managers.json'
 
+
 def load_managers():
     if not os.path.exists(JSON_FILE):
         return []
@@ -12,10 +13,12 @@ def load_managers():
         except json.JSONDecodeError:
             # print error message if needed
             return []
-        
+
+
 def save_managers(managers):
     with open(JSON_FILE, 'w') as file:
         json.dump(managers, file, indent=4)
+
 
 def get_manager_by_id(manager_id):
     managers = load_managers()
@@ -24,10 +27,12 @@ def get_manager_by_id(manager_id):
             return manager
     return None
 
+
 def add_manager(manager):
     managers = load_managers()
     managers.append(manager.to_dict())
     save_managers(managers)
+
 
 def update_manager(manager_id, updated_manager):
     managers = load_managers()
@@ -38,6 +43,7 @@ def update_manager(manager_id, updated_manager):
             return True
     return False
 
+
 def delete_manager(manager_id):
     managers = load_managers()
     for i, manager in enumerate(managers):
@@ -46,5 +52,3 @@ def delete_manager(manager_id):
             save_managers(managers)
             return True
     return False
-
-                    

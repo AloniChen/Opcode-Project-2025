@@ -34,14 +34,14 @@ class Order:
     def to_dict(self) -> Dict[str, Any]:
         """Convert order object to dictionary."""
         return \
-        {
-            "package_id": self._package_id,
-            "customer_id": self._customer_id,
-            "courier_id": self._courier_id,
-            "origin_id": self._origin_id,
-            "destination_id": self._destination_id,
-            "status": self._status,
-        }
+            {
+                "package_id": self._package_id,
+                "customer_id": self._customer_id,
+                "courier_id": self._courier_id,
+                "origin_id": self._origin_id,
+                "destination_id": self._destination_id,
+                "status": self._status,
+            }
 
     def _load_orders(self) -> List[Dict[str, Any]]:
         """Load orders from JSON file"""
@@ -91,7 +91,6 @@ class Order:
             print(f"Error creating order: {e}")
             return False
 
-
     @classmethod
     def update_by_package_id(cls, package_id, field_name: str, new_value) -> bool:
         """Update an order by package_id without creating an object"""
@@ -120,7 +119,8 @@ class Order:
                     return False
             # Find and remove the order
             original_count = len(orders)
-            orders = [order for order in orders if order.get("package_id") != package_id]
+            orders = [order for order in orders if order.get(
+                "package_id") != package_id]
             if len(orders) < original_count:
                 # Order was found and removed
                 with open(cls._json_filename, 'w', encoding='utf-8') as file:

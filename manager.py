@@ -9,7 +9,7 @@ class Manager:
 
     def __str__(self):
         return f"Manager(Name: {self.name}, ID: {self.manager_id}, Phone: {self.phone_number}, Email: {self.email})"
-    
+
     def to_dict(self):
         return {
             "name": self.name,
@@ -18,4 +18,3 @@ class Manager:
             "email": self.email,
             "password": self.password
         }
-    

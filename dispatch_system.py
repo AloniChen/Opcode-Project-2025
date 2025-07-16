@@ -1,12 +1,15 @@
 import json
 import logging
-from typing import List, Dict
+from typing import List, Dict, Optional
 from courier import Courier
+
+from manager import Manager
+
 from customer import Customer
 from customerList import add_customer, get_customer_by_id, update_customer
 from address_repository import AddressRepository
 from pathlib import Path
-from address import Address 
+from address import Address
 from order import Order
 from order import PackageStatus
 
@@ -17,6 +20,49 @@ class DispatchSystem:
     """
     A class to manage the dispatch system, including couriers and their operations.
     """
+
+    def __init__(self, managers_file: str, address_file: str):
+        managers_file = Path("data\\"+managers_file)
+        address_file = Path("data\\"+address_file)
+        self.managers_file = managers_file
+        if not self.managers_file.exists():
+            self._save_all_managers([])  # Create file if missing
+        self.address_repo = AddressRepository(address_file)
+
+    def _load_all_managers(self) -> List[dict]:
+        try:
+            with open(self.managers_file, "r") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            _logger.warning("Managers file not found.")
+            return []
+
+    def _save_all_managers(self, managers: List[dict]) -> None:
+        with open(self.managers_file, "w") as file:
+            json.dump(managers, file, indent=4)
+
+    def add_manager(self, manager: Manager) -> bool:
+
+        managers = self._load_all_managers()
+        if any(m["manager_id"] == manager.manager_id for m in managers):
+            _logger.warning(f"Manager ID {manager.manager_id} already exists.")
+            return False
+
+        managers.append(manager.to_dict())
+        self._save_all_managers(managers)
+        _logger.info(f"Manager {manager.name} added successfully.")
+        return True
+
+    def get_manager_by_id(self, manager_id: str) -> Optional[Manager]:
+        managers = self._load_all_managers()
+        for m in managers:
+            if m["manager_id"] == manager_id:
+                return Manager.from_dict(m)
+        _logger.info(f"Manager ID {manager_id} not found.")
+        return None
+
+    def list_all_managers(self) -> List[Manager]:
+        return [Manager.from_dict(m) for m in self._load_all_managers()]
 
     def add_courier(self, courier: Courier) -> bool:
         """
@@ -30,13 +76,6 @@ class DispatchSystem:
         Courier.create_courier(courier)
         _logger.info(f"Courier {courier.name} added successfully.")
         return True
-
-    def __init__(self, address_file: Path):
-        self.address_repo = AddressRepository(address_file)
-        # בעתיד נוכל להוסיף גם:
-        # self.customer_repo = CustomerRepository(...)
-        # self.order_repo = OrderRepository(...)
-        # self.courier_repo = CourierRepository(...)
 
     def add_address(self, address_data: dict) -> Address:
         """
@@ -97,6 +136,7 @@ class DispatchSystem:
         except FileNotFoundError:
             print("Orders file not found")
             return None
+
     def save_customer(self, customer_dict):
         existing = get_customer_by_id(customer_dict["customer_id"])
         if existing:
@@ -105,3 +145,4 @@ class DispatchSystem:
         else:
             add_customer(customer_dict)
             print("new customer has been added")
+
