@@ -14,9 +14,11 @@ class PackageStatus(Enum):
 
 class Order:
     _json_filename = "orders.json"
-    _package_number = 1
+    _package_number = None
 
     def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=0, status=PackageStatus.CONFIRMED, auto_save=True):
+        if Order._package_number is None:
+            Order._initialize_package_number()
         if package_id == 0:
             self._package_id = Order._package_number
             Order._package_number += 1
@@ -33,6 +35,28 @@ class Order:
 
     def __str__(self):
         return f"Order(package_id={self._package_id}, customer_id={self._customer_id}, courier_id={self._courier_id}, origin_id={self._origin_id}, destination_id={self._destination_id}, status={self._status})"
+
+    @classmethod
+    def _initialize_package_number(cls):
+        """Initialize _package_number based on existing orders in JSON file"""
+        try:
+            if os.path.exists(cls._json_filename):
+                with open(cls._json_filename, 'r', encoding='utf-8') as file:
+                    try:
+                        orders = json.load(file)
+                        if isinstance(orders, list) and orders:
+                            # Find the highest package_id and set _package_number to be higher
+                            max_id = max(order.get("package_id", 0) for order in orders)
+                            cls._package_number = max_id + 1
+                        else:
+                            cls._package_number = 1
+                    except json.JSONDecodeError:
+                        cls._package_number = 1
+            else:
+                cls._package_number = 1
+        except Exception as e:
+            print(f"Error initializing package number: {e}")
+            cls._package_number = 1
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert order object to dictionary."""
