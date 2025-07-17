@@ -125,8 +125,8 @@ class DispatchSystem:
         return new_order
 
     @staticmethod
-    def update_order_status(package_id, package_status: PackageStatus) -> None:
-        Order.update_by_package_id(package_id, "status", package_status.value)
+    def update_order_status(package_id, package_status: PackageStatus) -> bool:
+        return Order.update_by_package_id(package_id, "status", package_status.value)
 
     @staticmethod
     def view_orders() -> List[Order]:
