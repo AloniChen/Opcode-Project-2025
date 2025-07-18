@@ -143,7 +143,7 @@ class DispatchSystem:
             return []
 
     @staticmethod
-    def find_order_by_package_id(package_id) -> Order:
+    def find_order_by_package_id(package_id) -> Optional[Order]:
         try:
             with open("orders.json", "r") as file:
                 orders = json.load(file)
