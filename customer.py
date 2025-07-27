@@ -25,3 +25,20 @@ class Customer:
             "password": self.password,
             "credit": self.credit
         }
+
+    @staticmethod
+    def from_dict(data: dict) -> "Customer":
+        """
+        Create a Customer object from a dictionary.
+        """
+        customer = Customer(
+            data["name"],
+            data["customer_id"],
+            data.get("phone_number", ""),
+            data.get("email", ""),
+            data.get("password", ""),
+            data.get("credit", 0)
+        )
+
+        customer.address = data.get("address", [])
+        return customer
