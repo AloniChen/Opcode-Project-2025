@@ -1,3 +1,7 @@
+
+from typing import Dict
+
+
 class Manager:
     def __init__(self, name, manager_id, phone_number, email, password):
 
@@ -18,3 +22,13 @@ class Manager:
             "email": self.email,
             "password": self.password
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "Manager":
+        return cls(
+            name=data["name"],
+            manager_id=data["manager_id"],
+            phone_number=data["phone_number"],
+            email=data["email"],
+            password=data["password"]
+        )
