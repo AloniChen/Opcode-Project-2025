@@ -14,12 +14,11 @@ class PackageStatus(Enum):
 
 class Order:
     _json_filename = "orders.json"
-    _package_number = None
-
-    def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=0, status=PackageStatus.CONFIRMED, auto_save=True):
-        if Order._package_number is None:
+    _package_number = 0
+    def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=None, status=PackageStatus.CONFIRMED, auto_save=True):
+        if Order._package_number == 0:
             Order._initialize_package_number()
-        if package_id == 0:
+        if package_id is None:
             self._package_id = Order._package_number
             Order._package_number += 1
         else:
