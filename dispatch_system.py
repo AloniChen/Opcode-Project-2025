@@ -1,12 +1,10 @@
 import json
 import logging
-from typing import List, Dict, Optional
+from typing import List, Optional
 from courier import Courier
-
 from manager import Manager
-
 from customer import Customer
-from customerList import add_customer, get_customer_by_id, update_customer
+from customerList import add_customer, get_customer_by_id, update_customer, delete_customer
 from address_repository import AddressRepository
 from pathlib import Path
 from address import Address
@@ -98,6 +96,28 @@ class DispatchSystem:
         _logger.info(f"Courier {courier.name} added successfully.")
         return True
 
+    def delete_courier(self, courier_id: int) -> bool:
+        """
+        Deletes a courier by their ID.
+        Returns True if deleted successfully, False if courier does not exist.
+        """
+        if Courier.courier_exists(courier_id):
+            Courier.delete_courier(courier_id)
+            _logger.info(f"Courier with ID {courier_id} deleted successfully.")
+            return True
+        _logger.warning(f"Courier with ID {courier_id} not found.")
+        return False
+
+    def get_courier_by_id(self, courier_id: int) -> Optional[Courier]:
+        """
+        Returns the Courier object with the given courier_id, or None if not found.
+        """
+        courier = Courier.get_courier_by_id(courier_id)
+        if courier:
+            return courier
+        _logger.info(f"Courier with ID {courier_id} not found.")
+        return None
+
     def add_address(self, address_data: dict) -> Address:
         """
         Creates and stores a new Address from dictionary data.
@@ -158,6 +178,24 @@ class DispatchSystem:
             print("Orders file not found")
             return None
 
+    @staticmethod
+    def delete_order(package_id) -> bool:
+        try:
+            with open("orders.json", "r") as file:
+                orders = json.load(file)
+            new_orders = [order for order in orders if order.get(
+                "package_id") != package_id]
+            if len(new_orders) == len(orders):
+                print(f"Order {package_id} not found")
+                return False
+            with open("orders.json", "w") as file:
+                json.dump(new_orders, file, indent=4)
+            print(f"Order {package_id} deleted successfully")
+            return True
+        except FileNotFoundError:
+            print("Orders file not found")
+            return False
+
     def save_customer(self, customer_dict):
         existing = get_customer_by_id(customer_dict["customer_id"])
         if existing:
@@ -177,4 +215,37 @@ class DispatchSystem:
             # Customer already exists
             return False
         add_customer(customer_dict)
+        return True
+
+    def get_customer_by_id(self, customer_id: int) -> Optional[Customer]:
+        """
+        Returns the Customer object with the given customer_id, or None if not found.
+        """
+        customer_dict = get_customer_by_id(customer_id)
+        if customer_dict:
+            # ודא שיש לך from_dict במחלקה Customer
+            return Customer.from_dict(customer_dict)
+        return None
+
+    def update_customer(self, customer: Customer) -> bool:
+        """
+        Updates an existing customer in the system.
+        Returns True if updated successfully, False if customer does not exist.
+        """
+        customer_dict = customer.to_dict()
+        existing = get_customer_by_id(customer.customer_id)
+        if not existing:
+            return False
+        update_customer(customer_dict)
+        return True
+
+    def delete_customer(self, customer_id: int) -> bool:
+        """
+        Deletes a customer by their ID.
+        Returns True if deleted successfully, False if customer does not exist.
+        """
+        existing = get_customer_by_id(customer_id)
+        if not existing:
+            return False
+        delete_customer(customer_id)
         return True

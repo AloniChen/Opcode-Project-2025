@@ -61,7 +61,7 @@ def order_menu():
 
 
 def run_cli():
-    ds = DispatchSystem("managers.json", "addresses.json")
+    ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
     while True:
         choice = main_menu()
         if choice == "1":
@@ -88,10 +88,10 @@ def run_cli():
                     print("Leave blank to keep current value.")
                     for field in ["name", "phone_number", "email", "password", "credit"]:
                         val = input(
-                            f"{field.capitalize()} ({customer.get(field)}): ")
+                            f"{field.capitalize()} ({getattr(customer, field)}): ")
                         if val:
-                            customer[field] = float(
-                                val) if field == "credit" else val
+                            setattr(customer, field, float(val)
+                                    if field == "credit" else val)
                     updated = ds.update_customer(customer)
                     print(
                         "Customer updated." if updated else "Failed to update customer.")
