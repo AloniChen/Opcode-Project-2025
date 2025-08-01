@@ -1,9 +1,9 @@
 [
     {
-        "courier_id": 101,
-        "name": "Yossi",
-        "address_id": 1,
-        "current_location": 1,
-        "password": "yossipass"
+        "courier_id": 987654321,
+        "name": "adi-courier",
+        "address_id": 635654,
+        "current_location": 3243,
+        "password": "1234"
     }
 ]

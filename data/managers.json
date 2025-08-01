@@ -1,9 +1,9 @@
 [
     {
-        "name": "Dana",
-        "manager_id": "M001",
-        "phone_number": "0507654321",
-        "email": "dana@comp.com",
-        "password": "admin"
+        "name": "Adi-manager",
+        "manager_id": "123456789",
+        "phone_number": "0541234567",
+        "email": "adi@gmail.com",
+        "password": "1234"
     }
 ]
