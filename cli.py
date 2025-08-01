@@ -80,7 +80,7 @@ def run_cli():
                     print(
                         "Customer added successfully." if success else "Failed to add customer.")
                 elif c_choice == "2":
-                    customer_id = input("Customer ID: ")
+                    customer_id = int(input("Customer ID: "))
                     customer = ds.get_customer_by_id(customer_id)
                     if not customer:
                         print("Customer not found.")
@@ -96,11 +96,11 @@ def run_cli():
                     print(
                         "Customer updated." if updated else "Failed to update customer.")
                 elif c_choice == "3":
-                    customer_id = input("Customer ID: ")
+                    customer_id = int(input("Customer ID: "))
                     deleted = ds.delete_customer(customer_id)
                     print("Customer deleted." if deleted else "Customer not found.")
                 elif c_choice == "4":
-                    customer_id = input("Customer ID: ")
+                    customer_id = int(input("Customer ID: "))
                     customer = ds.get_customer_by_id(customer_id)
                     print(customer if customer else "Not found.")
                 elif c_choice == "5":
