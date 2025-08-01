@@ -86,16 +86,18 @@ class Address:
         Returns:
             str: A comma-separated string showing all address details including the unique ID.
         """
-        parts: list[str] = [
-            f"ID: {self.id}", f"Street: {self.street}, House number:{self.house_number}"]
+        parts: list[str] = []
+        parts.append(self.country)
+        parts.append(f"City: {self.city}")
+        parts.append(f"Street: {self.street}")
+        parts.append(f"House number:{self.house_number}")
         if self.apartment:
             parts.append(f"Apt: {self.apartment}")
         if self.floor:
             parts.append(f"Floor: {self.floor}")
-        parts.append(f"City: {self.city}, Postal: {self.postal_code}")
-        parts.append(self.country)
-        if self.coordinates:
-            parts.append(f"Location: {self.coordinates}")
+
+        if self.postal_code:
+            parts.append(f"Postal Code: {self.postal_code}")
         if self.message:
             parts.append(f"Message: {self.message}")
         return ", ".join(parts)

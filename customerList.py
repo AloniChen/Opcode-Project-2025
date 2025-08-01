@@ -19,7 +19,7 @@ def save_customers(customers: list[dict[str, any]]) -> None:
         json.dump(customers, f, indent=4)
 
 
-def get_customer_by_id(customer_id: int) -> Optional[dict[str, any]]:
+def get_customer_by_id(customer_id: str) -> Optional[dict[str, any]]:
     customers = load_customers()
     for customer in customers:
         if customer["customer_id"] == customer_id:

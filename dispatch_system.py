@@ -217,7 +217,7 @@ class DispatchSystem:
         add_customer(customer_dict)
         return True
 
-    def get_customer_by_id(self, customer_id: int) -> Optional[Customer]:
+    def get_customer_by_id(self, customer_id: str) -> Optional[Customer]:
         """
         Returns the Customer object with the given customer_id, or None if not found.
         """

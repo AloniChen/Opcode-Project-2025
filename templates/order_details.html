@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Order {{ order.package_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='../css/bootstrap.min.css') }}">
+  <style>
+    .card {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .stage {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .stage.completed::before {
+      content: "✔ ";
+      color: green;
+      font-weight: bold;
+    }
+    .stage.pending::before {
+      content: "🕒 ";
+      color: gray;
+      font-weight: bold;
+    }
+    .stage.pending {
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>Delivery Status</h3>
+    <p><strong>Package ID:</strong> {{ order.package_id }}</p>
+    <p><strong>Customer ID:</strong> {{ order.customer_id }}</p>
+    <p><strong>Courier: ID</strong> {{ order.courier_id }}</p>
+    <p><strong>From:</strong> {{ order.origin_address_str }}</p>
+    <p><strong>To:</strong> {{ order.destination_address_str }}</p>
+
+    <hr>
+
+    {# שלבים לפי סדר #}
+    <div class="stage completed">Order created</div>
+
+    <div class="stage {% if order.status in ['confirmed', 'on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">
+      Order confirmed (courier has been found)
+    </div>
+
+    <div class="stage {% if order.status in ['on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">
+      Picked Up by Driver – on delivery
+    </div>
+
+    <div class="stage {% if order.status == 'delivered' %}completed{% else %}pending{% endif %}">
+      Delivered
+    </div>
+
+    <hr>
+    <a href="/orders" class="btn btn-secondary">Back</a>
+  </div>
+</body>
+</html>
