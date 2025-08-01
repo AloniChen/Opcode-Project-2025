@@ -1,0 +1,27 @@
+[
+    {
+        "name": "a",
+        "customer_id": "213138915",
+        "address": [],
+        "phone_number": "0522044896",
+        "email": "ayala@gmail.com",
+        "password": "Aa12345678",
+        "credit": 1.0
+    },
+    {
+        "name": "Ayala",
+        "customer_id": "C001",
+        "phone_number": "0501234567",
+        "email": "ayala@mail.com",
+        "password": "pass123",
+        "credit": 100.0
+    },
+    {
+        "name": "Ayala",
+        "customer_id": "217578935",
+        "phone_number": "0537685674",
+        "email": "ayala@gmail.com",
+        "password": "342",
+        "credit": 5.0
+    }
+]

@@ -1,0 +1,9 @@
+[
+    {
+        "courier_id": 101,
+        "name": "Yossi",
+        "address_id": 1,
+        "current_location": 1,
+        "password": "yossipass"
+    }
+]
