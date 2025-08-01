@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "name": "Dana",
+        "manager_id": "M001",
+        "phone_number": "0507654321",
+        "email": "dana@comp.com",
+        "password": "admin"
+    }
+]
