@@ -43,7 +43,7 @@ def update_customer(updated_customer: dict[str, any]) -> bool:
     return False
 
 
-def update_customer_address(customer_id: int, new_address=None, address_to_remove=None) -> bool:
+def update_customer_address(customer_id: str, new_address=None, address_to_remove=None) -> bool:
     customers = load_customers()
     updated = False
 
@@ -63,7 +63,7 @@ def update_customer_address(customer_id: int, new_address=None, address_to_remov
     return False
 
 
-def delete_customer(customer_id: int) -> bool:
+def delete_customer(customer_id: str) -> bool:
     customers = load_customers()
     new_customers = [c for c in customers if c["customer_id"] != customer_id]
 

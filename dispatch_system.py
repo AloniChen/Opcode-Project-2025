@@ -239,7 +239,7 @@ class DispatchSystem:
         update_customer(customer_dict)
         return True
 
-    def delete_customer(self, customer_id: int) -> bool:
+    def delete_customer(self, customer_id: str) -> bool:
         """
         Deletes a customer by their ID.
         Returns True if deleted successfully, False if customer does not exist.
