@@ -217,7 +217,7 @@ class DispatchSystem:
         add_customer(customer_dict)
         return True
 
-    def get_customer_by_id(self, customer_id: int) -> Optional[Customer]:
+    def get_customer_by_id(self, customer_id: str) -> Optional[Customer]:
         """
         Returns the Customer object with the given customer_id, or None if not found.
         """
@@ -239,7 +239,7 @@ class DispatchSystem:
         update_customer(customer_dict)
         return True
 
-    def delete_customer(self, customer_id: int) -> bool:
+    def delete_customer(self, customer_id: str) -> bool:
         """
         Deletes a customer by their ID.
         Returns True if deleted successfully, False if customer does not exist.
