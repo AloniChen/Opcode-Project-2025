@@ -14,39 +14,20 @@ body.login-page {
     box-sizing: border-box;
 }
 
-.flash-messages {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1001;
-    max-width: 500px;
-    width: 90%;
-}
-
-.flash-message {
-    background: #ffebee;
-    border: 2px solid #f44336;
+.error-message-container {
+    background: #484849;
     border-radius: 8px;
-    padding: 12px 20px;
-    margin: 10px 0;
-    color: #c62828;
-    font-size: 16px;
-    font-weight: 500;
+    padding: 12px 15px;
+    margin: 15px 0 20px 0;
     text-align: center;
-    position: relative;
-    animation: slideIn 0.3s ease-out;
+    animation: fadeIn 0.3s ease-out;
 }
 
-.flash-message button {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #c62828;
-    cursor: pointer;
+.error-text {
+    color: #F6BD1A;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
 }
 
 @keyframes slideIn {
@@ -173,7 +154,7 @@ p {
 }
 
 .feature-card p {
-    color: #666;
+    color: #484849;
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
@@ -187,26 +168,24 @@ p {
     width: 70%;
     max-width: 300px;
     text-align: center;
-    margin: 20px;
 }
 
 .user-type-badge {
     display: inline-block;
     background: #ffbb05;
-    color: #333;
+    color: #484849;
     padding: 8px 20px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .login-title {
     font-size: 28px;
-    color: #ffbb05;
-    margin-bottom: 30px;
+    color: #484849;
+    margin-bottom: 20px;
     font-weight: 700;
 }
 
@@ -304,7 +283,7 @@ p {
     border-radius: 5px;
     margin-bottom: 20px;
     font-size: 12px;
-    color: #666;
+    color: #484849;
     border-left: 4px solid #e6a500;
 }
 

@@ -1,7 +1,7 @@
 import json
 import os
 from typing import List, Optional
-JSON_FILE = "customers.json"
+JSON_FILE = "data/customers.json"
 
 
 def load_customers() -> list[dict[str, any]]:

@@ -24,9 +24,11 @@
     <div class="login-container">
     <div class="user-type-badge">{{ user_type.title() }} Login</div>
         <h1 class="login-title">DeliverySim Login</h1>
-        <div id="errorHeader" class="error-header" style="display: none; margin: 10px 0;">
-            <span id="errorText">Wrong credentials. Please try again.</span>
-        </div>
+        {% if error_message %}
+    <div class="error-message-container">
+        <span class="error-text">{{ error_message }}</span>
+    </div>
+    {% endif %}
         
 
         <form method="POST" action="{{ url_for('authenticate') }}" id="loginForm">
@@ -47,7 +49,7 @@
 
         {% if user_type in ['users', 'couriers'] %}
         <div class="signup-section" style="margin-top: 15px;">
-    <a href="#" class="signup-button" onclick="alert('Signup coming soon!')">Create New Account</a>
+    <a href="{{ url_for('signup', user_type=user_type) }}" class="signup-button">Create New Account</a>
 </div>
 {% endif %}
 

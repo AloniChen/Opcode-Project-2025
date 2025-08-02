@@ -1,7 +1,7 @@
 import json
 import os
 
-JSON_FILE = 'managers.json'
+JSON_FILE = '/data/managers.json'
 
 
 def load_managers():
