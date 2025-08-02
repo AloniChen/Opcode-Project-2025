@@ -6,12 +6,24 @@
     <meta name="description" content="DeliverySim Login Page">
     <title>DeliverySim - Login</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="login-page">  <!-- ADD class="login-page" HERE -->
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                        <button onclick="this.parentElement.style.display='none'">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="login-container">
-        <div class="user-type-badge" id="userTypeBadge">Loading...</div>
-        
+    <div class="user-type-badge">{{ user_type.title() }} Login</div>
         <h1 class="login-title">DeliverySim Login</h1>
         <!-- Error message header (appears above the form) -->
         <div id="errorHeader" class="error-header" style="display: none; margin: 10px 0;">
@@ -19,7 +31,8 @@
         </div>
         
 
-        <form id="loginForm">
+        <form method="POST" action="{{ url_for('authenticate') }}" id="loginForm">
+            <input type="hidden" name="user_type" value="{{ user_type }}">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required placeholder="Enter your ID">
@@ -35,12 +48,13 @@
         </form>
 
         <!-- Add the missing signup section -->
-        <div id="signupSection" style="display: none; margin-top: 15px;">
-            <a href="#" id="signupLink" class="signup-button">Create New Account</a>
-        </div>
+        {% if user_type in ['users', 'couriers'] %}
+        <div class="signup-section" style="margin-top: 15px;">
+    <a href="#" class="signup-button" onclick="alert('Signup coming soon!')">Create New Account</a>
+</div>
+{% endif %}
 
-        <a href="index.html" class="back-link">← Back to Home</a>
+        <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
     </div>
-    <script src="../js/login.js"></script>
 </body>
 </html>
