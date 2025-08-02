@@ -8,8 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="login-page">  <!-- ADD class="login-page" HERE -->
-    <!-- Flash Messages -->
+<body class="login-page">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="flash-messages">
@@ -25,7 +24,6 @@
     <div class="login-container">
     <div class="user-type-badge">{{ user_type.title() }} Login</div>
         <h1 class="login-title">DeliverySim Login</h1>
-        <!-- Error message header (appears above the form) -->
         <div id="errorHeader" class="error-header" style="display: none; margin: 10px 0;">
             <span id="errorText">Wrong credentials. Please try again.</span>
         </div>
@@ -47,7 +45,6 @@
             
         </form>
 
-        <!-- Add the missing signup section -->
         {% if user_type in ['users', 'couriers'] %}
         <div class="signup-section" style="margin-top: 15px;">
     <a href="#" class="signup-button" onclick="alert('Signup coming soon!')">Create New Account</a>

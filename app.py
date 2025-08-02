@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import json
 
 app = Flask(__name__)
-app.config['TEMPLATES_AUTO_RELOAD'] = True  # Add this line
+app.config['TEMPLATES_AUTO_RELOAD'] = True 
 app.secret_key = 'your-secret-key-change-this'
 
 ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
@@ -41,7 +41,6 @@ def authenticate_user(user_type, user_id, password):
         return None
     
     for user in users:
-        # Handle both string and integer IDs
         user_id_str = str(user.get(id_field, ''))
         if user_id_str == str(user_id) and user.get('password') == password:
             return user

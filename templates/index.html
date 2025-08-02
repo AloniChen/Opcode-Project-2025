@@ -60,10 +60,7 @@
         </div>
         <script>
 function goToLogin(userType) {
-    console.log('Clicked on:', userType); // Debug line
-    
-    // Use direct URLs instead of Flask url_for in JavaScript
-    var baseUrl = window.location.origin;
+        var baseUrl = window.location.origin;
     window.location.href = baseUrl + '/login/' + userType;
 }
 </script>
