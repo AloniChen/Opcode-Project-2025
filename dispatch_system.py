@@ -21,12 +21,13 @@ class DispatchSystem:
     """
 
     def __init__(self, managers_file: str, address_file: str):
-        managers_file = Path("data\\"+managers_file)
-        address_file = Path("data\\"+address_file)
-        self.managers_file = managers_file
+        self.managers_file: Path = Path("data") / managers_file
+        address_path: Path = Path("data") / address_file
+
         if not self.managers_file.exists():
-            self._save_all_managers([])  # Create file if missing
-        self.address_repo = AddressRepository(address_file)
+            self._save_all_managers([])
+
+        self.address_repo = AddressRepository(address_path)
 
     def _load_all_managers(self) -> List[dict]:
         try:
@@ -217,7 +218,7 @@ class DispatchSystem:
         add_customer(customer_dict)
         return True
 
-    def get_customer_by_id(self, customer_id: int) -> Optional[Customer]:
+    def get_customer_by_id(self, customer_id: str) -> Optional[Customer]:
         """
         Returns the Customer object with the given customer_id, or None if not found.
         """
@@ -239,7 +240,7 @@ class DispatchSystem:
         update_customer(customer_dict)
         return True
 
-    def delete_customer(self, customer_id: int) -> bool:
+    def delete_customer(self, customer_id: str) -> bool:
         """
         Deletes a customer by their ID.
         Returns True if deleted successfully, False if customer does not exist.
@@ -249,3 +250,61 @@ class DispatchSystem:
             return False
         delete_customer(customer_id)
         return True
+
+    def assign_closest_courier_to_order(self, package_id) -> bool:
+        """
+        Assigns the closest courier to the order by calculating the distance between
+        the courier's current_location and the order's destination_id using their Address coordinates.
+        Assumes all couriers are available.
+        Returns True if successful, False otherwise.
+        """
+        order = self.find_order_by_package_id(package_id)
+        if not order:
+            _logger.error(f"Order with package ID {package_id} not found.")
+            return False
+        courier_id = getattr(order, "courier_id", None)
+        if courier_id:
+            _logger.error(
+                f"Order {package_id} is already assigned to a courier.")
+            return False
+
+        couriers = Courier.read_couriers()
+        if not couriers:
+            _logger.error("No couriers available.")
+            return False
+
+        # Get Address objects for destination and couriers' locations
+        destination_address = self.get_address_by_id(order._destination_id)
+        if not destination_address:
+            _logger.error(
+                f"Destination address ID {order._destination_id} not found.")
+            return False
+
+        closest_courier = None
+        min_distance = float('inf')
+        for courier in couriers:
+            courier_address = self.get_address_by_id(courier.current_location)
+            if not courier_address or not courier_address.coordinates or not destination_address.coordinates:
+                continue
+            # Calculate Euclidean distance between coordinates
+            x1, y1 = courier_address.coordinates
+            x2, y2 = destination_address.coordinates
+            distance = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+            if distance < min_distance:
+                min_distance = distance
+                closest_courier = courier
+
+        if not closest_courier:
+            _logger.error(
+                "No available couriers with valid addresses to assign.")
+            return False
+
+        # Assign the closest courier using the static method
+        if Order.update_by_package_id(order._package_id, "courier_id", closest_courier.courier_id):
+            _logger.info(
+                f"Order {package_id} assigned to courier {closest_courier.courier_id}.")
+            return True
+        else:
+            _logger.error(
+                f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
+            return False
