@@ -5,60 +5,139 @@
   <title>Order {{ order.package_id }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='../css/bootstrap.min.css') }}">
   <style>
+    body {
+      background-color: #333;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #222;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .header h3 {
+      color: #FFA726;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
     .card {
-      max-width: 500px;
+      background-color: #fff;
+      color: #000;
+      max-width: 600px;
       margin: 40px auto;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      border: 4px solid #FFA726;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
+
+    .form-control, .form-select {
+      background-color: #f9f9f9;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #FFA726;
+      box-shadow: 0 0 0 0.2rem rgba(255, 167, 38, 0.25);
+    }
+
+    .btn {
+      margin-top: 10px;
+    }
+
     .stage {
       margin-bottom: 10px;
       font-size: 16px;
     }
+
     .stage.completed::before {
       content: "✔ ";
-      color: green;
+      color: #4CAF50;
       font-weight: bold;
     }
+
     .stage.pending::before {
       content: "🕒 ";
-      color: gray;
+      color: #aaa;
       font-weight: bold;
     }
+
     .stage.pending {
-      color: gray;
+      color: #aaa;
+    }
+
+    .btn-secondary {
+      background-color: #555;
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary:hover {
+      background-color: #666;
+    }
+
+    hr {
+      border-top: 1px solid #ccc;
+    }
+
+    label {
+      margin-top: 10px;
+    }
+
+    input, select {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="header">
     <h3>Delivery Status</h3>
+  </div>
+
+  <div class="card">
     <p><strong>Package ID:</strong> {{ order.package_id }}</p>
     <p><strong>Customer ID:</strong> {{ order.customer_id }}</p>
-    <p><strong>Courier: ID</strong> {{ order.courier_id }}</p>
+    <p><strong>Courier ID:</strong> {{ order.courier_id }}</p>
     <p><strong>From:</strong> {{ order.origin_address_str }}</p>
     <p><strong>To:</strong> {{ order.destination_address_str }}</p>
 
+    {% if role == 'manager' %}
+    <form method="POST" action="/update_order">
+      <input type="hidden" name="package_id" value="{{ order.package_id }}">
+      <label for="courier_id">Assign Courier ID:</label>
+      <input type="text" class="form-control" name="courier_id" value="{{ order.courier_id }}">
+      <button type="submit" name="action" value="assign" class="btn btn-warning w-100">Assign Courier</button>
+      <button type="submit" name="action" value="cancel" class="btn btn-danger w-100">Cancel Order</button>
+    </form>
+    {% endif %}
+
+    {% if role == 'courier' %}
+    <form method="POST" action="/update_status">
+      <input type="hidden" name="package_id" value="{{ order.package_id }}">
+      <label for="status">Update Status:</label>
+      <select name="status" class="form-control">
+        <option value="on-delivery" {% if order.status == "on-delivery" %}selected{% endif %}>On Delivery</option>
+        <option value="delivered" {% if order.status == "delivered" %}selected{% endif %}>Delivered</option>
+      </select>
+      <button type="submit" class="btn btn-success w-100">Update Status</button>
+    </form>
+    {% endif %}
+
     <hr>
 
-    {# שלבים לפי סדר #}
     <div class="stage completed">Order created</div>
-
-    <div class="stage {% if order.status in ['confirmed', 'on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">
-      Order confirmed (courier has been found)
-    </div>
-
-    <div class="stage {% if order.status in ['on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">
-      Picked Up by Driver – on delivery
-    </div>
-
-    <div class="stage {% if order.status == 'delivered' %}completed{% else %}pending{% endif %}">
-      Delivered
-    </div>
+    <div class="stage {% if order.status in ['confirmed', 'on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">Order confirmed (courier has been found)</div>
+    <div class="stage {% if order.status in ['on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">Picked Up by Driver – on delivery</div>
+    <div class="stage {% if order.status == 'delivered' %}completed{% else %}pending{% endif %}">Delivered</div>
 
     <hr>
-    <a href="/orders" class="btn btn-secondary">Back</a>
+    <a href="/orders" class="btn btn-secondary w-100">← Back to Orders</a>
   </div>
 </body>
 </html>

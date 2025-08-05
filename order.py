@@ -15,6 +15,7 @@ class PackageStatus(Enum):
 class Order:
     _json_filename = "orders.json"
     _package_number = 0
+
     def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=None, status=PackageStatus.CONFIRMED, auto_save=True):
         if Order._package_number == 0:
             Order._initialize_package_number()
@@ -45,7 +46,8 @@ class Order:
                         orders = json.load(file)
                         if isinstance(orders, list) and orders:
                             # Find the highest package_id and set _package_number to be higher
-                            max_id = max(order.get("package_id", 0) for order in orders)
+                            max_id = max(order.get("package_id", 0)
+                                         for order in orders)
                             cls._package_number = max_id + 1
                         else:
                             cls._package_number = 1
@@ -118,7 +120,7 @@ class Order:
             return False
 
     @classmethod
-    def update_by_package_id(cls, package_id, field_name: str, new_value) -> bool:
+    def update_by_package_id(cls, package_id: int, field_name: str, new_value: int) -> bool:
         """Update an order by package_id without creating an object"""
         try:
             with open(cls._json_filename, 'r', encoding='utf-8') as file:

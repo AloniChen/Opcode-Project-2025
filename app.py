@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 from dispatch_system import DispatchSystem
-from order import Order
+from order import Order, PackageStatus
 
 app = Flask(__name__)
 ds = DispatchSystem("managers.json", "addresses.json")
 
 app.secret_key = 'my_secret_key'
-role = "courier"
-user_id = 2
+role = "courier"  # Example role, can be 'customer' or 'courier'
+user_id = 3
 
 
 @app.route("/")
@@ -44,6 +44,7 @@ def show_all_orders():
 
 @app.route("/order_details", methods=["POST"])
 def order_details():
+
     # קבלת הנתונים מהטופס הנשלח
     order = {
         "package_id": request.form["package_id"],
@@ -53,7 +54,48 @@ def order_details():
         "destination_address_str": request.form["destination_address_str"],
         "status": request.form["status"]
     }
-    return render_template("order_details.html", order=order)
+    return render_template("order_details.html", order=order, role=role)
+
+
+@app.route("/update_order", methods=["POST"])
+def update_order():  # Update order status
+    if role != "manager":
+        return "Unauthorized", 403
+
+    package_id = int(request.form["package_id"])
+    action = request.form["action"]
+
+    if action == "assign":
+        new_courier = request.form["courier_id"]
+        success = ds.update_order_courier(package_id, int(new_courier))
+        message = "Courier updated." if success else "Update failed."
+    elif action == "cancel":
+        success = ds.update_order_status(package_id, PackageStatus.CANCELED)
+        message = "Order canceled." if success else "Cancel failed."
+    else:
+        message = "Unknown action."
+
+    return redirect("/orders")
+
+
+@app.route("/update_status", methods=["POST"])
+def update_status():
+    if role != "courier":
+        return "Unauthorized", 403
+
+    package_id = int(request.form["package_id"])
+    new_status = request.form["status"]
+
+    if new_status not in ["on-delivery", "delivered"]:
+        return "Invalid status", 400
+
+    success = ds.update_order_status(package_id, new_status)
+    return redirect("/orders")
+
+
+@app.route('/new_order')
+def new_order():
+    return render_template("new_order.html")
 
 
 if __name__ == "__main__":

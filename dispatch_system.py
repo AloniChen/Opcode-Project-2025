@@ -21,12 +21,13 @@ class DispatchSystem:
     """
 
     def __init__(self, managers_file: str, address_file: str):
-        managers_file = Path("data\\"+managers_file)
-        address_file = Path("data\\"+address_file)
-        self.managers_file = managers_file
+        self.managers_file: Path = Path("data") / managers_file
+        address_path: Path = Path("data") / address_file
+
         if not self.managers_file.exists():
-            self._save_all_managers([])  # Create file if missing
-        self.address_repo = AddressRepository(address_file)
+            self._save_all_managers([])
+
+        self.address_repo = AddressRepository(address_path)
 
     def _load_all_managers(self) -> List[dict]:
         try:
@@ -145,8 +146,12 @@ class DispatchSystem:
         return new_order
 
     @staticmethod
-    def update_order_status(package_id, package_status: PackageStatus) -> bool:
-        return Order.update_by_package_id(package_id, "status", package_status.value)
+    def update_order_status(package_id: int, package_status: PackageStatus) -> bool:
+        return Order.update_by_package_id(package_id, "status", package_status)
+
+    @staticmethod
+    def update_order_courier(package_id: int, courier_id: int) -> bool:
+        return Order.update_by_package_id(package_id, "courier_id", courier_id)
 
     @staticmethod
     def view_orders() -> List[Order]:
