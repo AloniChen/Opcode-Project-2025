@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any, List, Union, Optional
 from dataclasses import dataclass
 
-COURIER_JSON = "courier.json"
+COURIER_JSON = "data/courier.json"
 
 
 @dataclass
