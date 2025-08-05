@@ -13,7 +13,7 @@ class PackageStatus(Enum):
 
 
 class Order:
-    _json_filename = "orders.json"
+    _json_filename = "data/orders.json"
     _package_number = 0
     def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=None, status=PackageStatus.CONFIRMED, auto_save=True):
         if Order._package_number == 0:

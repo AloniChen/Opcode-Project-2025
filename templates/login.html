@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DeliverySim Login Page">
+    <title>DeliverySim - Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                        <button onclick="this.parentElement.style.display='none'">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="login-container">
+    <div class="user-type-badge">{{ user_type.title() }} Login</div>
+        <h1 class="login-title">DeliverySim Login</h1>
+        {% if error_message %}
+    <div class="error-message-container">
+        <span class="error-text">{{ error_message }}</span>
+    </div>
+    {% endif %}
+        
+
+        <form method="POST" action="{{ url_for('authenticate') }}" id="loginForm">
+            <input type="hidden" name="user_type" value="{{ user_type }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your ID">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="login-button">Sign In</button>
+            
+        </form>
+
+        {% if user_type in ['users', 'couriers'] %}
+        <div class="signup-section" style="margin-top: 15px;">
+    <a href="{{ url_for('signup', user_type=user_type) }}" class="signup-button">Create New Account</a>
+</div>
+{% endif %}
+
+        <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>
