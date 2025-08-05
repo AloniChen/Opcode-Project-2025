@@ -21,12 +21,13 @@ class DispatchSystem:
     """
 
     def __init__(self, managers_file: str, address_file: str):
-        managers_file = Path("data\\"+managers_file)
-        address_file = Path("data\\"+address_file)
-        self.managers_file = managers_file
+        self.managers_file: Path = Path("data") / managers_file
+        address_path: Path = Path("data") / address_file
+
         if not self.managers_file.exists():
-            self._save_all_managers([])  # Create file if missing
-        self.address_repo = AddressRepository(address_file)
+            self._save_all_managers([])
+
+        self.address_repo = AddressRepository(address_path)
 
     def _load_all_managers(self) -> List[dict]:
         try:
