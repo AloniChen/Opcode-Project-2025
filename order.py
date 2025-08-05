@@ -120,7 +120,7 @@ class Order:
             return False
 
     @classmethod
-    def update_by_package_id(cls, package_id: int, field_name: str, new_value: int) -> bool:
+    def update_by_package_id(cls, package_id: int, field_name: str, new_value) -> bool:
         """Update an order by package_id without creating an object"""
         try:
             with open(cls._json_filename, 'r', encoding='utf-8') as file:
