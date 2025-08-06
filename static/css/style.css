@@ -371,12 +371,8 @@ body.dashboard-page {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.yellow-box {
-  background-color: #dbf5ff;
-}
-
-.green-box {
-  background-color: #d7f6e7;
+.lightGray-box {
+  background-color: #efefef;
 }
 
 .order-list {
