@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manager Dashboard</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body class="body.dashboard-page">
+
+  <h1 class="manager-title">Manager Dashboard</h1>
+
+  <div class="manager-container">
+   <!-- תת כותרת -->
+<h2 class="section-title">Overview</h2>
+
+<!-- בלוקים עם סיכום נתונים -->
+<div class="overview-boxes">
+  <div class="overview-box yellow-box">
+    <p>Active Orders</p>
+    <h3>12</h3>
+  </div>
+  <div class="overview-box green-box">
+    <p>Total Deliveries</p>
+    <h3>87</h3>
+  </div>
+</div>
+
+<!-- תת כותרת -->
+<h2 class="section-title">Active Orders</h2>
+
+<!-- רשימת הזמנות -->
+<div class="order-list">
+
+  <div class="order-card">
+    <div class="order-info">
+      <p class="order-id">Order #QE78901</p>
+      <p class="order-customer">Sarah J.<br><span class="order-address">123 Main St</span></p>
+    </div>
+    <div class="order-status on-the-way">On the Way<br><span>ETA: 15 min</span></div>
+  </div>
+
+  <!-- אפשר לשכפל את ה־order-card לפי הצורך -->
+</div>
+
+<!-- תת כותרת -->
+<h2 class="section-title">Delivery Performance</h2>
+
+<!-- אזור גרף -->
+<div class="graph-box">
+  <img src="{{ url_for('static', filename='images/dummy-graph.png') }}" alt="Daily Deliveries Graph" style="width:100%">
+  <div class="graph-filters">
+    <button class="filter-button active">Daily</button>
+    <button class="filter-button">Weekly</button>
+    <button class="filter-button">Monthly</button>
+  </div>
+</div>
+<h2 class="section-title">Live Deliveries</h2>
+
+<canvas id="deliveriesChart" width="400" height="200"></canvas>
+
+<script>
+let chart;
+
+async function fetchDataAndUpdateChart() {
+  const response = await fetch('/api/deliveries');
+  const data = await response.json();
+
+  const labels = data.labels;
+  const values = data.values;
+
+  if (!chart) {
+    const ctx = document.getElementById('deliveriesChart').getContext('2d');
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Deliveries',
+          data: values,
+          backgroundColor: 'rgba(63, 81, 181, 0.2)',
+          borderColor: '#3f51b5',
+          borderWidth: 2,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  } else {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = values;
+    chart.update();
+  }
+}
+
+// ריצה ראשונית + כל 10 שניות
+fetchDataAndUpdateChart();
+setInterval(fetchDataAndUpdateChart, 10000);
+</script>
+
+  </div>
+
+</body>
+</html>

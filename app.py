@@ -3,7 +3,9 @@ from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
 import json
 from dispatch_system import DispatchSystem
-
+from flask import jsonify
+import random
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True 
@@ -100,6 +102,22 @@ def show_all_orders() -> str:
     orders = ds.view_orders()
     orders_dicts = [order.to_dict() for order in orders]
     return render_template("order_list.html", orders=orders_dicts)
+
+@app.route("/manager_dashboard")
+def manager_dashboard():
+    return render_template("manager_dashboard.html")
+
+@app.route('/api/deliveries')
+def get_delivery_data():
+    # דוגמה לנתונים מזויפים – כל רענון מחזיר מספרים חדשים
+    now = datetime.now()
+    labels = [(now - timedelta(hours=i)).strftime('%H:%M') for i in reversed(range(6))]
+    values = [random.randint(50, 150) for _ in range(6)]
+
+    return jsonify({
+        'labels': labels,
+        'values': values
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
