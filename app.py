@@ -130,5 +130,12 @@ def get_region_data():
         'values': values
     })
 
+@app.route('/api/orders')
+def get_orders():
+    with open('orders.json', 'r') as f:
+        orders = json.load(f)
+
+    return jsonify(orders)
+
 if __name__ == "__main__":
     app.run(debug=True)

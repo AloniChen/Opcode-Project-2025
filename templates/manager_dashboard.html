@@ -52,7 +52,6 @@
             </div>
         </div>
         <!-- Section: Deliveries by Region -->
-        <canvas id="regionPieChart" class="chart-canvas"></canvas>
         <h2 class="section-title">Delivery Breakdowns</h2>
         <div class="pie-chart-grid">
             <div class="pie-chart-box">
@@ -74,8 +73,8 @@
     <script>
         const pieDataList = [
             {
-                labels: ['North', 'South', 'East', 'West'],
-                values: [35, 25, 20, 20]
+                labels: ["created", "confirmed", "delivered", "canceled", "on-delivery"],
+                values: [35, 25, 20, 20, 25]
             },
             {
                 labels: ['Tel Aviv', 'Haifa', 'Jerusalem', 'Beer Sheva'],
@@ -95,8 +94,48 @@
             'rgba(246, 189, 26, 0.8)', // כתום
             'rgba(246, 189, 26, 0.5)', // כתום בהיר
             'rgba(72, 72, 73, 0.7)',   // אפור כהה
-            'rgba(119, 119, 119, 0.4)' // אפור בהיר
+            'rgba(119, 119, 119, 0.4)', // אפור בהיר
+            'rgba(200, 200, 200, 0.6)'
         ];
+
+        async function renderStatusPieChart() {
+            const response = await fetch('/api/orders');
+            const orders = await response.json();
+
+            // Count statuses
+            const statusCounts = {};
+            orders.forEach(order => {
+                const status = order.status;
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+
+            const labels = Object.keys(statusCounts);
+            const values = Object.values(statusCounts);
+            const colors = pieColors.slice(0, labels.length);
+
+            const ctx = document.getElementById('statusPieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        renderStatusPieChart();
 
         pieDataList.forEach((data, index) => {
             const ctx = document.getElementById(`pie${index + 1}`).getContext('2d');
