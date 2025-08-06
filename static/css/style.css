@@ -1,3 +1,11 @@
+
+:root {
+  --primary-color: #F6BD1A;
+  --gray-color: #484849;
+  --lightGray-color: #777;
+  --white-color: white;
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
@@ -54,7 +62,7 @@ p {
     width: 100%;
     height: 100%;
     z-index: 1;
-    background-color: #484849;
+    background-color: var(--background-gray);
 }
 
 .welcome-page {
@@ -320,7 +328,7 @@ body.dashboard-page {
 }
 
 .manager-title {
-  color: white;
+  color: var(--white-color);
   font-size: 36px;
   text-align: center;
   padding: 20px 0;
@@ -329,7 +337,7 @@ body.dashboard-page {
 
 /*scrolll manager page*/
 .manager-container {
-  background-color: white;
+  background-color: var(--white-color);
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 80%;
@@ -364,7 +372,7 @@ body.dashboard-page {
 }
 
 .yellow-box {
-  background-color: #fff6db;
+  background-color: #dbf5ff;
 }
 
 .green-box {
@@ -380,7 +388,7 @@ body.dashboard-page {
 
 .order-card {
   background-color: #fff;
-  border-left: 4px solid #3f51b5;
+  border-left: 4px solid var(--primary-color);
   border-radius: 8px;
   padding: 16px 20px;
   display: flex;
@@ -405,7 +413,7 @@ body.dashboard-page {
 }
 
 .order-status {
-  text-align: right;
+  text-align: center;
   font-size: 14px;
   font-weight: 600;
   border-radius: 6px;
@@ -414,8 +422,8 @@ body.dashboard-page {
 }
 
 .on-the-way {
-  background-color: #e0f3ff;
-  color: #007bff;
+  background-color: #ffeebf;
+  color: var(--lightGray-color);
 }
 
 .graph-box {
@@ -442,10 +450,40 @@ body.dashboard-page {
 }
 
 .filter-button.active {
-  background-color: #3f51b5;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--white-color);
 }
 
+.pie-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto 60px;
+}
+
+.pie-chart-box {
+  background-color: var(--white-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.pie-chart-box canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 850px) {
+  .pie-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 850px) {
     .heading h1 {

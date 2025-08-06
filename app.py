@@ -119,5 +119,16 @@ def get_delivery_data():
         'values': values
     })
 
+@app.route('/api/deliveries_by_region')
+def get_region_data():
+    # נתונים לדוגמה – תוכלי להחליף בשליפה מ-DB
+    labels = ['Tel Aviv', 'Haifa', 'Jerusalem', 'Beersheba', 'Eilat']
+    values = [40, 25, 20, 10, 5]  # אחוזים/כמויות
+
+    return jsonify({
+        'labels': labels,
+        'values': values
+    })
+
 if __name__ == "__main__":
     app.run(debug=True)
