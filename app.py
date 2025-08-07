@@ -3,6 +3,10 @@ from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
 import json
 from dispatch_system import DispatchSystem
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
@@ -11,41 +15,26 @@ app.secret_key = 'your-secret-key-change-this'
 
 ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
 
-def load_user_data(user_type: str) -> List[Dict[str, Any]]:
-    file_mapping = {
-        'users': 'data/customers.json',
-        'couriers': 'data/courier.json', 
-        'managers': 'data/managers.json'
-    }
-    
-    filename = file_mapping.get(user_type)
-    if not filename:
-        return []
-    
-    try:
-        with open(filename, 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []
-
 def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[Dict[str, Any]]:
-    users = load_user_data(user_type)
-
-    id_fields = {
-        'users': 'customer_id',
-        'couriers': 'courier_id',
-        'managers': 'manager_id'
-    }
-    
-    id_field = id_fields.get(user_type)
-    if not id_field:
-        return None
-    
-    for user in users:
-        user_id_str = str(user.get(id_field, ''))
-        if user_id_str == str(user_id) and user.get('password') == password:
-            return user
-    
+    """
+    Authenticate user using DispatchSystem methods
+    """
+    try:
+        if user_type == 'managers':
+            manager = ds.get_manager_by_id(user_id)
+            if manager and getattr(manager, 'password', None) == password:
+                return manager.to_dict()    
+        elif user_type == 'users':
+            customer = ds.get_customer_by_id(user_id)
+            if customer and getattr(customer, 'password', None) == password:
+                return customer.to_dict()  
+        elif user_type == 'couriers':
+            courier = ds.get_courier_by_id(int(user_id))
+            if courier and getattr(courier, 'password', None) == password:
+                return courier.to_dict()
+    except (ValueError, AttributeError) as e:
+        logger.error(f"Authentication error: {e}")
+        
     return None
 
 @app.route("/")
@@ -60,7 +49,6 @@ def login_page(user_type: str) -> Union[str, Response]:
     
     return render_template("login.html", user_type=user_type)
 
-@app.route("/authenticate", methods=['POST'])
 @app.route("/authenticate", methods=['POST'])
 def authenticate() -> Union[str, Response]:
     user_type = request.form.get('user_type') or 'users'  
