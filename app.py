@@ -156,6 +156,9 @@ def order_details():
 
 @app.route("/update_order", methods=["POST"])
 def update_order():  # Update order status
+    if not session.get("user_type") or not session.get("user_id"):
+        flash("You must log in first")
+        return redirect(url_for("index"))
     if not session['user_type'] or session['user_type'] != "managers":
         return "Unauthorized", 403
 
@@ -177,6 +180,9 @@ def update_order():  # Update order status
 
 @app.route("/update_status", methods=["POST"])
 def update_status():
+    if not session.get("user_type") or not session.get("user_id"):
+        flash("You must log in first")
+        return redirect(url_for("index"))
     if not session['user_type'] or session['user_type'] != "couriers":
         return "Unauthorized", 403
 
