@@ -81,10 +81,12 @@ def authenticate() -> Union[str, Response]:
         session['user'] = user
         session['user_type'] = user_type
         session['user_id'] = user_id
-        return redirect(url_for('create_new_order'))
+        return redirect(url_for('create_new_order', user_type=user_type))
 
     else:
         error_message = 'Wrong credentials. Please try again.'
+        print(
+            f"[DEBUG] Authentication failed for user_id: {user_id}, user_type: {user_type}")
         return render_template("login.html", user_type=user_type, error_message=error_message)
 
 
@@ -110,10 +112,96 @@ def show_all_orders() -> str:
     return render_template("order_list.html", orders=orders_dicts)
 
 
-@app.route("/create_new_order")
-def create_new_order():
+@app.route("/create_new_order/<user_type>")
+def create_new_order(user_type: str) -> Union[str, Response]:
+    # Check if user is logged in
+    if 'user' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login_page', user_type=user_type))
+
+    # Check if user is a customer (not courier or manager)
+    if session.get('user_type') != 'users':
+        flash('Only customers can create orders')
+        return redirect(url_for('login_page', user_type=user_type))
+
+    # Check if user has a valid ID
+    if not session.get('user_id'):
+        flash('Invalid user session. Please log in again.')
+        return redirect(url_for('login_page', user_type=user_type))
+    print(f"[DEBUG] User ID: {session['user_id']}")
+
     return render_template("create_new_order.html")
 
 
+@app.route("/create_order", methods=['POST'])
+def create_order() -> Union[str, Response]:
+    try:
+        # Address data with validation - no customer_id needed
+        street = request.form.get('street', '').strip()
+        house_number_str = request.form.get('house_number', '0')
+        city = request.form.get('city', '').strip()
+        postal_code = request.form.get('postal_code', '').strip()
+        country = request.form.get('country', '').strip()
+
+        if not all([street, house_number_str, city, country]):
+            flash('Street, house number, city and country are required')
+            return render_template("create_new_order.html")
+
+        house_number = int(house_number_str)
+        apartment_str = request.form.get('apartment', '').strip()
+        apartment = int(
+            apartment_str) if apartment_str and apartment_str.isdigit() else None
+
+        floor_str = request.form.get('floor', '').strip()
+        floor = int(floor_str) if floor_str and floor_str.isdigit() else None
+
+        # Special instructions
+        message = request.form.get('message', '').strip()
+
+        # Create address data dictionary for DispatchSystem
+        address_data = {
+            'street': street,
+            'house_number': house_number,
+            'city': city,
+            'postal_code': postal_code,
+            'country': country,
+            'apartment': apartment,
+            'floor': floor,
+            'message': message if message else None
+        }
+
+        # Add address using ONLY DispatchSystem methods
+        address = ds.add_address(address_data)
+
+        # Get customer_id from session if logged in, otherwise use guest
+        customer_id = session.get('user_id', 'GUEST_001')
+
+        # Create order using Order class through dispatch system
+        order_data = {
+            'customer_id': customer_id,
+            'courier_id': None,  # Will be assigned later by system
+            'origin_id': None,  # Default origin - could be made dynamic
+            'destination_id': address.id,
+            'status': 'created'
+        }
+
+        # Create order through dispatch system
+        order = ds.add_order(order_data)
+
+        if order:
+            flash('Order created successfully!')
+            return redirect(url_for('show_all_orders'))
+        else:
+            flash('Failed to create order')
+            return render_template("create_new_order.html")
+
+    except ValueError as e:
+        flash(f'Invalid input data: {str(e)}')
+        return render_template("create_new_order.html")
+    except Exception as e:
+        flash(f'Error creating order: {str(e)}')
+        return render_template("create_new_order.html")
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

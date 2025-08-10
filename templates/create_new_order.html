@@ -30,8 +30,6 @@ https://templatemo.com/tm-503-newline
         <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
         <script src="../static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <!-- Google Maps API -->
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
     </head>
     <body>
 
@@ -90,23 +88,6 @@ https://templatemo.com/tm-503-newline
                               <div class="col-lg-12">
                                   <h4>Create Your Order</h4>
                               </div>
-                              <div class="col-lg-6 col-sm-12">
-                                <fieldset>
-                                  <input name="customer_id" type="text" id="customer_id" placeholder="Customer ID*" required="">
-                                </fieldset>
-                              </div>
-
-                              <!-- Google Maps Address Search -->
-                              <div class="col-lg-6 col-sm-12">
-                                <fieldset>
-                                  <input name="address_search" type="text" id="address_search" placeholder="Search for address..." autocomplete="off">
-                                </fieldset>
-                              </div>
-
-                              <!-- Google Maps Display -->
-                              <div class="col-lg-12">
-                                <div id="map" style="height: 300px; width: 100%; margin: 10px 0; border: 2px solid #ddd; border-radius: 5px;"></div>
-                              </div>
 
                               <!-- Address Details Section -->
                               <div class="col-lg-12">
@@ -114,7 +95,7 @@ https://templatemo.com/tm-503-newline
                               </div>
                               <div class="col-lg-8 col-sm-12">
                                 <fieldset>
-                                  <input name="street" type="text" id="street" placeholder="Street Name*" required="" readonly>
+                                  <input name="street" type="text" id="street" placeholder="Street Name*" required="">
                                 </fieldset>
                               </div>
                               <div class="col-lg-4 col-sm-12">
@@ -124,17 +105,17 @@ https://templatemo.com/tm-503-newline
                               </div>
                               <div class="col-lg-6 col-sm-12">
                                 <fieldset>
-                                  <input name="city" type="text" id="city" placeholder="City*" required="" readonly>
+                                  <input name="city" type="text" id="city" placeholder="City*" required="">
                                 </fieldset>
                               </div>
                               <div class="col-lg-6 col-sm-12">
                                 <fieldset>
-                                  <input name="postal_code" type="text" id="postal_code" placeholder="Postal Code*" required="" readonly>
+                                  <input name="postal_code" type="text" id="postal_code" placeholder="Postal Code">
                                 </fieldset>
                               </div>
                               <div class="col-lg-6 col-sm-12">
                                 <fieldset>
-                                  <input name="country" type="text" id="country" placeholder="Country*" required="" readonly>
+                                  <input name="country" type="text" id="country" placeholder="Country*" required="" value="Israel">
                                 </fieldset>
                               </div>
                               <div class="col-lg-3 col-sm-12">
@@ -147,10 +128,6 @@ https://templatemo.com/tm-503-newline
                                   <input name="floor" type="number" id="floor" placeholder="Floor">
                                 </fieldset>
                               </div>
-
-                              <!-- Hidden fields for coordinates -->
-                              <input type="hidden" name="latitude" id="latitude">
-                              <input type="hidden" name="longitude" id="longitude">
 
                               <div class="col-lg-12">
                                 <fieldset>
@@ -188,114 +165,6 @@ https://templatemo.com/tm-503-newline
         <script src="../static/js/vendor/bootstrap.min.js"></script>
         <script src="../static/js/plugins.js"></script>
         <script src="../static/js/main.js"></script>
-
-        <!-- Google Maps JavaScript -->
-        <script>
-        let map;
-        let marker;
-
-        function initMap() {
-            // Initialize the map centered on a default location (Tel Aviv)
-            const defaultLocation = { lat: 32.0853, lng: 34.7818 };
-
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 10,
-                center: defaultLocation,
-                mapTypeId: 'roadmap'
-            });
-
-            // Initialize autocomplete
-            const autocomplete = new google.maps.places.Autocomplete(
-                document.getElementById('address_search'),
-                {
-                    types: ['address'],
-                    componentRestrictions: { country: ['IL', 'US'] } // הגבל למדינות ספציפיות
-                }
-            );
-
-            autocomplete.addListener('place_changed', function() {
-                const place = autocomplete.getPlace();
-
-                if (!place.geometry) {
-                    alert('No details available for this address');
-                    return;
-                }
-
-                // מלא את השדות על פי הכתובת שנבחרה
-                fillAddressFields(place);
-
-                // שמור את הקואורדינטות
-                const lat = place.geometry.location.lat();
-                const lng = place.geometry.location.lng();
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-
-                // עדכן את המפה והמרקר
-                updateMapAndMarker(lat, lng, place.formatted_address || place.name);
-            });
-        }
-
-        function updateMapAndMarker(lat, lng, address) {
-            const location = { lat: lat, lng: lng };
-
-            // מרכז את המפה על המיקום החדש
-            map.setCenter(location);
-            map.setZoom(16);
-
-            // הסר מרקר קודם אם קיים
-            if (marker) {
-                marker.setMap(null);
-            }
-
-            // צור מרקר חדש
-            marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                title: address,
-                animation: google.maps.Animation.DROP
-            });
-
-            // הוסף חלון מידע למרקר
-            const infoWindow = new google.maps.InfoWindow({
-                content: `<div style="padding: 5px;"><strong>Delivery Address:</strong><br>${address}</div>`
-            });
-
-            marker.addListener('click', function() {
-                infoWindow.open(map, marker);
-            });
-        }
-
-        function fillAddressFields(place) {
-            // נקה שדות קודמים
-            document.getElementById('street').value = '';
-            document.getElementById('city').value = '';
-            document.getElementById('postal_code').value = '';
-            document.getElementById('country').value = '';
-
-            // מלא שדות על פי הרכיבים של הכתובת
-            for (const component of place.address_components) {
-                const componentType = component.types[0];
-
-                switch (componentType) {
-                    case 'street_number':
-                        document.getElementById('house_number').value = component.long_name;
-                        break;
-                    case 'route':
-                        document.getElementById('street').value = component.long_name;
-                        break;
-                    case 'locality':
-                        document.getElementById('city').value = component.long_name;
-                        break;
-                    case 'postal_code':
-                        document.getElementById('postal_code').value = component.long_name;
-                        break;
-                    case 'country':
-                        document.getElementById('country').value = component.long_name;
-                        break;
-                }
-            }
-        }
-        </script>
 
     </body>
 </html>
