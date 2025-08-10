@@ -8,8 +8,8 @@ class PackageStatus(Enum):
     CREATED = "created"
     CONFIRMED = "confirmed - assigned to courier"
     DELIVERED = "delivered"
-    CANCELED_A = "canceled - no available courier"
-    CANCELED_D = "canceled - not delivered"
+    NOT_ASSIGNED = "no assigned courier"
+    CANCELED = "canceled"
     ON_DELIVERY = "on-delivery"
 
 

@@ -263,11 +263,6 @@ class DispatchSystem:
         if not order:
             _logger.error(f"Order with package ID {package_id} not found.")
             return False
-        courier_id = getattr(order, "courier_id", None)
-        if courier_id:
-            _logger.error(
-                f"Order {package_id} is already assigned to a courier.")
-            return False
 
         couriers = Courier.read_couriers()
         if not couriers:
@@ -298,7 +293,7 @@ class DispatchSystem:
         if not closest_courier:
             _logger.error(
                 "No available couriers with valid addresses to assign.")
-            self.update_order_status(package_id, PackageStatus.CANCELED_D)
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
             return False
 
         # Assign the closest courier using the static method
@@ -310,5 +305,5 @@ class DispatchSystem:
         else:
             _logger.error(
                 f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
-            self.update_order_status(package_id, PackageStatus.CANCELED_A)
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
             return False
