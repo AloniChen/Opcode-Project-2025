@@ -24,7 +24,7 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
             manager = ds.get_manager_by_id(user_id)
             if manager and getattr(manager, 'password', None) == password:
                 return manager.to_dict()    
-        elif user_type == 'users':
+        elif user_type == 'customers':
             customer = ds.get_customer_by_id(user_id)
             if customer and getattr(customer, 'password', None) == password:
                 return customer.to_dict()  
@@ -43,7 +43,7 @@ def index() -> str:
 
 @app.route("/login/<user_type>")
 def login_page(user_type: str) -> Union[str, Response]:
-    if user_type not in ['users', 'couriers', 'managers']:
+    if user_type not in ['customers', 'couriers', 'managers']:
         flash('Invalid user type')
         return redirect(url_for('index'))
     
@@ -51,7 +51,7 @@ def login_page(user_type: str) -> Union[str, Response]:
 
 @app.route("/authenticate", methods=['POST'])
 def authenticate() -> Union[str, Response]:
-    user_type = request.form.get('user_type') or 'users'  
+    user_type = request.form.get('user_type') or 'customers'  
     user_id = request.form.get('username') or ''          
     password = request.form.get('password') or ''            
     if not all([user_type, user_id, password]):
