@@ -156,7 +156,7 @@ class DispatchSystem:
     @staticmethod
     def view_orders() -> List[Order]:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             orders_list = []
             for order in orders:
@@ -170,7 +170,7 @@ class DispatchSystem:
     @staticmethod
     def find_order_by_package_id(package_id) -> Optional[Order]:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             for order in orders:
                 if order.get("package_id") == package_id:
@@ -186,7 +186,7 @@ class DispatchSystem:
     @staticmethod
     def delete_order(package_id) -> bool:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             new_orders = [order for order in orders if order.get(
                 "package_id") != package_id]
