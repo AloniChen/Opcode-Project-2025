@@ -1,5 +1,6 @@
 import json
 import logging
+from re import M
 from typing import List, Optional
 from courier import Courier
 from manager import Manager
@@ -297,14 +298,17 @@ class DispatchSystem:
         if not closest_courier:
             _logger.error(
                 "No available couriers with valid addresses to assign.")
+            self.update_order_status(package_id, PackageStatus.CANCELED_D)
             return False
 
         # Assign the closest courier using the static method
         if Order.update_by_package_id(order._package_id, "courier_id", closest_courier.courier_id):
             _logger.info(
                 f"Order {package_id} assigned to courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.CONFIRMED)
             return True
         else:
             _logger.error(
                 f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.CANCELED_A)
             return False
