@@ -1,0 +1,301 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Newline Template</title>
+<!--
+Newline Template
+https://templatemo.com/tm-503-newline
+-->
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="../static/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="../static/css/bootstrap.css">
+        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../static/css/fontAwesome.css">
+        <link rel="stylesheet" href="../static/css/templatemo-style.css">
+        <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../static/css/font-awesome.css">
+        <link rel="stylesheet" href="../static/css/templatemo-klassy-cafe.css">
+        <link rel="stylesheet" href="../static/css/owl-carousel.css">
+        <link rel="stylesheet" href="../static/css/lightbox.css">
+
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+        <script src="../static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <!-- Google Maps API -->
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
+    </head>
+    <body>
+
+        <div class="overlay"></div>
+        <section class="top-part">
+          <video controls autoplay loop>
+            <source src="videos/video.mp4" type="video/mp4">
+            <source src="videos/video.ogg" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+        </section>
+
+        <section class="cd-hero">
+
+          <div class="cd-slider-nav">
+            <nav>
+              <span class="cd-marker item-1"></span>
+
+              <ul>
+                    <li class="selected">
+                      <a href="order_list.html">
+                        <div class="image-icon">
+                          <img src="../static/img/home-icon.png">
+                        </div>
+                        <h6>Home</h6>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="add_order.html">
+                        <div class="image-icon">
+                          <img src="../static/img/contact-icon.png">
+                        </div>
+                        <h6>Sign Up</h6>
+                      </a>
+                    </li>
+                </ul>
+
+            </nav>
+          </div> <!-- .cd-slider-nav -->
+
+          <div class="cd-hero-slider">
+
+            <div class="selected">
+              <div class="heading">
+                <h1>DeliverySim</h1>
+                <span>Welcome to DeliverySim</span>
+              </div>
+              <div class="cd-full-width first-slide">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="content first-content">
+                        <div class="contact-form">
+                          <form id="contact" action="/create_order" method="post">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                  <h4>Create Your Order</h4>
+                              </div>
+                              <div class="col-lg-6 col-sm-12">
+                                <fieldset>
+                                  <input name="customer_id" type="text" id="customer_id" placeholder="Customer ID*" required="">
+                                </fieldset>
+                              </div>
+
+                              <!-- Google Maps Address Search -->
+                              <div class="col-lg-6 col-sm-12">
+                                <fieldset>
+                                  <input name="address_search" type="text" id="address_search" placeholder="Search for address..." autocomplete="off">
+                                </fieldset>
+                              </div>
+
+                              <!-- Google Maps Display -->
+                              <div class="col-lg-12">
+                                <div id="map" style="height: 300px; width: 100%; margin: 10px 0; border: 2px solid #ddd; border-radius: 5px;"></div>
+                              </div>
+
+                              <!-- Address Details Section -->
+                              <div class="col-lg-12">
+                                <h5>Address Details</h5>
+                              </div>
+                              <div class="col-lg-8 col-sm-12">
+                                <fieldset>
+                                  <input name="street" type="text" id="street" placeholder="Street Name*" required="" readonly>
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-4 col-sm-12">
+                                <fieldset>
+                                  <input name="house_number" type="number" id="house_number" placeholder="House Number*" required="">
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-6 col-sm-12">
+                                <fieldset>
+                                  <input name="city" type="text" id="city" placeholder="City*" required="" readonly>
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-6 col-sm-12">
+                                <fieldset>
+                                  <input name="postal_code" type="text" id="postal_code" placeholder="Postal Code*" required="" readonly>
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-6 col-sm-12">
+                                <fieldset>
+                                  <input name="country" type="text" id="country" placeholder="Country*" required="" readonly>
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-3 col-sm-12">
+                                <fieldset>
+                                  <input name="apartment" type="number" id="apartment" placeholder="Apartment">
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-3 col-sm-12">
+                                <fieldset>
+                                  <input name="floor" type="number" id="floor" placeholder="Floor">
+                                </fieldset>
+                              </div>
+
+                              <!-- Hidden fields for coordinates -->
+                              <input type="hidden" name="latitude" id="latitude">
+                              <input type="hidden" name="longitude" id="longitude">
+
+                              <div class="col-lg-12">
+                                <fieldset>
+                                  <textarea name="message" rows="4" id="message" placeholder="Special delivery instructions (Optional)"></textarea>
+                                </fieldset>
+                              </div>
+                              <div class="col-lg-12">
+                                <fieldset>
+                                  <button type="submit" id="form-submit" class="main-button-icon">Create Order</button>
+                                </fieldset>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- .cd-hero-slider -->
+        </section> <!-- .cd-hero -->
+
+
+        <footer>
+          <p>Copyright &copy; 2020 Your Company
+
+        	| Designed by <em>Template Mo</em></p>
+        </footer>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../static/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+
+        <script src="../static/js/vendor/bootstrap.min.js"></script>
+        <script src="../static/js/plugins.js"></script>
+        <script src="../static/js/main.js"></script>
+
+        <!-- Google Maps JavaScript -->
+        <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            // Initialize the map centered on a default location (Tel Aviv)
+            const defaultLocation = { lat: 32.0853, lng: 34.7818 };
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: defaultLocation,
+                mapTypeId: 'roadmap'
+            });
+
+            // Initialize autocomplete
+            const autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('address_search'),
+                {
+                    types: ['address'],
+                    componentRestrictions: { country: ['IL', 'US'] } // הגבל למדינות ספציפיות
+                }
+            );
+
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+
+                if (!place.geometry) {
+                    alert('No details available for this address');
+                    return;
+                }
+
+                // מלא את השדות על פי הכתובת שנבחרה
+                fillAddressFields(place);
+
+                // שמור את הקואורדינטות
+                const lat = place.geometry.location.lat();
+                const lng = place.geometry.location.lng();
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+
+                // עדכן את המפה והמרקר
+                updateMapAndMarker(lat, lng, place.formatted_address || place.name);
+            });
+        }
+
+        function updateMapAndMarker(lat, lng, address) {
+            const location = { lat: lat, lng: lng };
+
+            // מרכז את המפה על המיקום החדש
+            map.setCenter(location);
+            map.setZoom(16);
+
+            // הסר מרקר קודם אם קיים
+            if (marker) {
+                marker.setMap(null);
+            }
+
+            // צור מרקר חדש
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: address,
+                animation: google.maps.Animation.DROP
+            });
+
+            // הוסף חלון מידע למרקר
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div style="padding: 5px;"><strong>Delivery Address:</strong><br>${address}</div>`
+            });
+
+            marker.addListener('click', function() {
+                infoWindow.open(map, marker);
+            });
+        }
+
+        function fillAddressFields(place) {
+            // נקה שדות קודמים
+            document.getElementById('street').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('postal_code').value = '';
+            document.getElementById('country').value = '';
+
+            // מלא שדות על פי הרכיבים של הכתובת
+            for (const component of place.address_components) {
+                const componentType = component.types[0];
+
+                switch (componentType) {
+                    case 'street_number':
+                        document.getElementById('house_number').value = component.long_name;
+                        break;
+                    case 'route':
+                        document.getElementById('street').value = component.long_name;
+                        break;
+                    case 'locality':
+                        document.getElementById('city').value = component.long_name;
+                        break;
+                    case 'postal_code':
+                        document.getElementById('postal_code').value = component.long_name;
+                        break;
+                    case 'country':
+                        document.getElementById('country').value = component.long_name;
+                        break;
+                }
+            }
+        }
+        </script>
+
+    </body>
+</html>
