@@ -6,5 +6,21 @@
     "origin_id": 13124,
     "destination_id": 32423,
     "status": "confirmed"
+  },
+  {
+    "package_id": 2,
+    "customer_id": "1",
+    "courier_id": 11,
+    "origin_id": 1,
+    "destination_id": 1,
+    "status": "confirmed"
+  },
+  {
+    "package_id": 3,
+    "customer_id": "2",
+    "courier_id": 22,
+    "origin_id": 22,
+    "destination_id": 2,
+    "status": "confirmed"
   }
 ]

@@ -107,7 +107,7 @@
     <p><strong>From:</strong> {{ order.origin_address_str }}</p>
     <p><strong>To:</strong> {{ order.destination_address_str }}</p>
 
-    {% if role == 'manager' %}
+    {% if role == 'managers' %}
     <form method="POST" action="/update_order">
       <input type="hidden" name="package_id" value="{{ order.package_id }}">
       <label for="courier_id">Assign Courier ID:</label>
@@ -117,7 +117,7 @@
     </form>
     {% endif %}
 
-    {% if role == 'courier' %}
+    {% if role == 'couriers' %}
     <form method="POST" action="/update_status">
       <input type="hidden" name="package_id" value="{{ order.package_id }}">
       <label for="status">Update Status:</label>

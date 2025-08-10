@@ -1,15 +1,27 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
 </head>
+
 <body class="home-page">
     <div class="overlay"></div>
     <section class="welcome-page">
+
         <ul class="welcome">
+            {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-message">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
             <li class="selected">
                 <div class="heading">
                     <h1>DeliverySim</h1>

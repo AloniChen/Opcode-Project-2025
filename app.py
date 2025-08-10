@@ -13,8 +13,6 @@ app = Flask(__name__)
 ds = DispatchSystem("managers.json", "addresses.json")
 
 app.secret_key = 'my_secret_key'
-role = "courier"  # Example role, can be 'customer' or 'courier'
-user_id = 3
 
 
 def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[Dict[str, Any]]:
@@ -69,7 +67,7 @@ def authenticate() -> Union[str, Response]:
         session['user'] = user
         session['user_type'] = user_type
         session['user_id'] = user_id
-        return redirect(url_for('dashboard', user_type=user_type))
+        return redirect(url_for('show_all_orders'))
 
     else:
         error_message = 'Wrong credentials. Please try again.'
@@ -95,14 +93,37 @@ def signup(user_type: str) -> str:
 def show_all_orders():
     orders = ds.view_orders()
     enriched_orders = []
-    if role == "courier":
+    user_type = session.get("user_type")        # לא יזרוק חריגה אם חסר
+    user_id = session.get("user_id")
+    # print(session['user_type'])
+    if not session.get("user_type") or not session.get("user_id"):
+        flash("You must log in first")
+        return redirect(url_for("index"))
+    if user_type and user_type == "couriers":
         courier_id = user_id
-        orders = [order for order in orders if order._courier_id == courier_id]
+        if courier_id:
+            orders = [
+                order for order in orders if order._courier_id == courier_id]
+        else:
+            flash('Unauthorized access')
+            return redirect(url_for('index'))
 
-    elif role == "customer":
+    elif user_type and user_type == "customers":
         customer_id = user_id
-        orders = [order for order in orders if order._customer_id == customer_id]
-
+        if customer_id:
+            orders = [
+                order for order in orders if order._customer_id == customer_id]
+        else:
+            flash('Unauthorized access')
+            return redirect(url_for('index'))
+    elif user_type and user_type == "managers":
+        manager_id = user_id
+        if not manager_id:
+            flash('Unauthorized access')
+            return redirect(url_for('index'))
+    else:
+        flash('Unauthorized access')
+        return redirect(url_for('index'))
     for order in orders:
         origin_address = ds.get_address_by_id(order._origin_id)
         destination_address = ds.get_address_by_id(order._destination_id)
@@ -130,12 +151,12 @@ def order_details():
         "destination_address_str": request.form["destination_address_str"],
         "status": request.form["status"]
     }
-    return render_template("order_details.html", order=order, role=role)
+    return render_template("order_details.html", order=order, role=session['user_type'])
 
 
 @app.route("/update_order", methods=["POST"])
 def update_order():  # Update order status
-    if role != "manager":
+    if not session['user_type'] or session['user_type'] != "managers":
         return "Unauthorized", 403
 
     package_id = int(request.form["package_id"])
@@ -156,7 +177,7 @@ def update_order():  # Update order status
 
 @app.route("/update_status", methods=["POST"])
 def update_status():
-    if role != "courier":
+    if not session['user_type'] or session['user_type'] != "couriers":
         return "Unauthorized", 403
 
     package_id = int(request.form["package_id"])
