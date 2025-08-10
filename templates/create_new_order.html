@@ -49,20 +49,20 @@ https://templatemo.com/tm-503-newline
               <span class="cd-marker item-1"></span>
 
               <ul>
-                    <li class="selected">
-                      <a href="order_list.html">
+                    <li>
+                      <a href="{{ url_for('order_list', user_type=user_type) }}">
                         <div class="image-icon">
                           <img src="../static/img/home-icon.png">
                         </div>
                         <h6>Home</h6>
                       </a>
                     </li>
-                    <li>
-                      <a href="add_order.html">
+                    <li class="selected">
+                      <a href="{{ url_for('create_new_order', user_type=user_type) }}">
                         <div class="image-icon">
                           <img src="../static/img/contact-icon.png">
                         </div>
-                        <h6>Sign Up</h6>
+                        <h6>Create Order</h6>
                       </a>
                     </li>
                 </ul>

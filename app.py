@@ -112,6 +112,13 @@ def show_all_orders() -> str:
     return render_template("order_list.html", orders=orders_dicts)
 
 
+@app.route("/orders/<user_type>")
+def order_list(user_type: str) -> str:
+    orders = ds.view_orders()
+    orders_dicts = [order.to_dict() for order in orders]
+    return render_template("order_list.html", orders=orders_dicts, user_type=user_type)
+
+
 @app.route("/create_new_order/<user_type>")
 def create_new_order(user_type: str) -> Union[str, Response]:
     # Check if user is logged in
@@ -130,7 +137,7 @@ def create_new_order(user_type: str) -> Union[str, Response]:
         return redirect(url_for('login_page', user_type=user_type))
     print(f"[DEBUG] User ID: {session['user_id']}")
 
-    return render_template("create_new_order.html")
+    return render_template("create_new_order.html", user_type=user_type)
 
 
 @app.route("/create_order", methods=['POST'])
