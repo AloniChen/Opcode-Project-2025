@@ -47,7 +47,7 @@
             
         </form>
 
-        {% if user_type in ['users', 'couriers'] %}
+        {% if user_type in ['customers'] %}
         <div class="signup-section" style="margin-top: 15px;">
     <a href="{{ url_for('signup', user_type=user_type) }}" class="signup-button">Create New Account</a>
 </div>
