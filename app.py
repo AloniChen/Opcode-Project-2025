@@ -46,6 +46,11 @@ def login_page(user_type: str) -> Union[str, Response]:
     if user_type not in ['customers', 'couriers', 'managers']:
         flash('Invalid user type')
         return redirect(url_for('index'))
+    if 'user' in session:
+        logged_in_user_type = session.get('user_type', user_type)
+        return redirect(url_for('show_all_orders', user_type=logged_in_user_type))
+
+    return render_template("login.html", user_type=user_type)
     
     return render_template("login.html", user_type=user_type)
 
