@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Order {{ order.package_id }}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='../css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
   <style>
     body {
       background-color: #333;
@@ -12,19 +12,16 @@
       margin: 0;
       padding: 0;
     }
-
     .header {
       background-color: #222;
       padding: 20px 0;
       text-align: center;
     }
-
     .header h3 {
       color: #FFA726;
       font-size: 28px;
       margin-bottom: 5px;
     }
-
     .card {
       background-color: #fff;
       color: #000;
@@ -35,64 +32,25 @@
       border: 4px solid #FFA726;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-
     .form-control, .form-select {
       background-color: #f9f9f9;
       color: #000;
       border: 1px solid #ccc;
     }
-
     .form-control:focus, .form-select:focus {
       border-color: #FFA726;
       box-shadow: 0 0 0 0.2rem rgba(255, 167, 38, 0.25);
     }
-
-    .btn {
-      margin-top: 10px;
-    }
-
-    .stage {
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    .stage.completed::before {
-      content: "✔ ";
-      color: #4CAF50;
-      font-weight: bold;
-    }
-
-    .stage.pending::before {
-      content: "🕒 ";
-      color: #aaa;
-      font-weight: bold;
-    }
-
-    .stage.pending {
-      color: #aaa;
-    }
-
-    .btn-secondary {
-      background-color: #555;
-      color: white;
-      border: none;
-    }
-
-    .btn-secondary:hover {
-      background-color: #666;
-    }
-
-    hr {
-      border-top: 1px solid #ccc;
-    }
-
-    label {
-      margin-top: 10px;
-    }
-
-    input, select {
-      margin-bottom: 10px;
-    }
+    .btn { margin-top: 10px; }
+    .stage { margin-bottom: 10px; font-size: 16px; }
+    .stage.completed::before { content: "✔ "; color: #4CAF50; font-weight: bold; }
+    .stage.pending::before { content: "🕒 "; color: #aaa; font-weight: bold; }
+    .stage.pending { color: #aaa; }
+    .btn-secondary { background-color: #555; color: white; border: none; }
+    .btn-secondary:hover { background-color: #666; }
+    hr { border-top: 1px solid #ccc; }
+    label { margin-top: 10px; }
+    input, select { margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -107,23 +65,48 @@
     <p><strong>From:</strong> {{ order.origin_address_str }}</p>
     <p><strong>To:</strong> {{ order.destination_address_str }}</p>
 
-    {% if role == 'managers' %}
-    <form method="POST" action="/update_order">
-      <input type="hidden" name="package_id" value="{{ order.package_id }}">
-      <label for="courier_id">Assign Courier ID:</label>
-      <input type="text" class="form-control" name="courier_id" value="{{ order.courier_id }}">
-      <button type="submit" name="action" value="assign" class="btn btn-warning w-100">Assign Courier</button>
-      <button type="submit" name="action" value="cancel" class="btn btn-danger w-100">Cancel Order</button>
-    </form>
-    {% endif %}
+    {# --- Normalization of status (Enum or string, plus legacy 'confirmed') --- #}
+    {% set raw_status = (order.status.value if not (order.status is string) else order.status) %}
+    {% set s = (raw_status|string)|lower %}
+    {% set status = 'confirmed - assigned to courier' if s == 'confirmed' else s %}
+
+    <p>
+      <strong>Status:</strong>
+      <span class="label
+        {% if status == 'delivered' %}label-success
+        {% elif status == 'canceled' %}label-danger
+        {% elif status == 'on-delivery' %}label-info
+        {% elif status == 'confirmed - assigned to courier' %}label-warning
+        {% elif status == 'no assigned courier' %}label-default
+        {% else %}label-default{% endif %}">
+        {{ status }}
+      </span>
+    </p>
+{% if role == 'managers' %}
+<form method="POST" action="/update_order">
+  <input type="hidden" name="package_id" value="{{ order.package_id }}">
+
+  <label for="courier_id">Assign Courier ID (manual):</label>
+  <input type="text" class="form-control" name="courier_id" value="{{ order.courier_id }}" placeholder="e.g. 101">
+
+  <button type="submit" name="action" value="assign" class="btn btn-warning w-100">Assign Courier manually</button>
+
+  <button type="submit" name="action" value="assign_closest" class="btn btn-primary w-100">
+    Assign Closest Courier
+  </button>
+
+  <button type="submit" name="action" value="cancel" class="btn btn-danger w-100">Cancel Order</button>
+</form>
+{% endif %}
+
 
     {% if role == 'couriers' %}
     <form method="POST" action="/update_status">
       <input type="hidden" name="package_id" value="{{ order.package_id }}">
       <label for="status">Update Status:</label>
       <select name="status" class="form-control">
-        <option value="on-delivery" {% if order.status == "on-delivery" %}selected{% endif %}>On Delivery</option>
-        <option value="delivered" {% if order.status == "delivered" %}selected{% endif %}>Delivered</option>
+        <option value="on-delivery" {{ 'selected' if status == 'on-delivery' else '' }}>On Delivery</option>
+        <option value="delivered"   {{ 'selected' if status == 'delivered' else '' }}>Delivered</option>
       </select>
       <button type="submit" class="btn btn-success w-100">Update Status</button>
     </form>
@@ -131,10 +114,40 @@
 
     <hr>
 
-    <div class="stage completed">Order created</div>
-    <div class="stage {% if order.status in ['confirmed', 'on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">Order confirmed (courier has been found)</div>
-    <div class="stage {% if order.status in ['on-delivery', 'delivered'] %}completed{% else %}pending{% endif %}">Picked Up by Driver – on delivery</div>
-    <div class="stage {% if order.status == 'delivered' %}completed{% else %}pending{% endif %}">Delivered</div>
+    {# --- Timeline driven by new Enum values --- #}
+    <div class="stage {{ 'completed' if status in [
+      'created',
+      'confirmed - assigned to courier',
+      'on-delivery',
+      'delivered',
+      'canceled',
+      'no assigned courier'
+    ] else 'pending' }}">
+      Order created
+    </div>
+
+    <div class="stage {{ 'completed' if status in [
+      'confirmed - assigned to courier',
+      'on-delivery',
+      'delivered'
+    ] else 'pending' }}">
+      Order confirmed (assigned to courier)
+      {% if status == 'no assigned courier' %}
+        – waiting for courier
+      {% endif %}
+    </div>
+
+    <div class="stage {{ 'completed' if status in ['on-delivery','delivered'] else 'pending' }}">
+      Picked Up by Driver – on delivery
+    </div>
+
+    <div class="stage {{ 'completed' if status == 'delivered' else 'pending' }}">
+      Delivered
+    </div>
+
+    {% if status == 'canceled' %}
+      <div class="stage completed">Canceled</div>
+    {% endif %}
 
     <hr>
     <a href="/orders" class="btn btn-secondary w-100">← Back to Orders</a>

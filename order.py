@@ -6,8 +6,9 @@ from enum import Enum
 
 class PackageStatus(Enum):
     CREATED = "created"
-    CONFIRMED = "confirmed"
+    CONFIRMED = "confirmed - assigned to courier"
     DELIVERED = "delivered"
+    NOT_ASSIGNED = "no assigned courier"
     CANCELED = "canceled"
     ON_DELIVERY = "on-delivery"
 
