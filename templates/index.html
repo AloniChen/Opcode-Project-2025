@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 </head>
 <body class="home-page">
-    <div class="overlay"></div>        
+    <div class="overlay"></div>
     <section class="welcome-page">
         <ul class="welcome">
             <li class="selected">
@@ -18,7 +18,21 @@
             </li>
         </ul>
     </section>
-    
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                        <button onclick="this.parentElement.style.display='none'">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
     <div class="features-section">
         <div class="feature-card" onclick="goToLogin('users')">
             <div class="feature-icon">
