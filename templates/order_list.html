@@ -45,9 +45,9 @@ https://templatemo.com/tm-503-newline
               <ul>
                 <li class="selected"><a href="#0"><div class="image-icon"><img src="../static/img/home-icon.png"></div><h6>Welcome</h6></a></li>
                 <li><a href="#0"><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>About Us</h6></a></li>
-                <li><a href="#0"><div class="image-icon"><img src="../static/img/featured-icon.png"></div><h6>Featured</h6></a></li>
+                <li><a href="{{ url_for('dashboard', user_type=session.get('user_type')) }}"><div class="image-icon"><img src="../static/img/featured-icon.png"></div><h6>Featured</h6></a></li>
                 <li><a href="#0"><div class="image-icon"><img src="../static/img/projects-icon.png"></div><h6>Projects</h6></a></li>
-                <li><a href="#0"><div class="image-icon"><img src="../static/img/contact-icon.png"></div><h6>Contact Us</h6></a></li>
+                <li><a href="{{ url_for('create_new_order', user_type=session.get('user_type')) }}"><div class="image-icon"><img src="../static/img/contact-icon.png"></div><h6>Create Order</h6></a></li>
               </ul>
             </nav>
           </div> <!-- .cd-slider-nav -->

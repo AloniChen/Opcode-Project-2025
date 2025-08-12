@@ -15,9 +15,10 @@ app.secret_key = 'your-secret-key-change-this'
 
 ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
 
+
 def load_user_data(user_type: str) -> List[Dict[str, Any]]:
     file_mapping = {
-        'users': 'data/customers.json',
+        'customers': 'data/customers.json',
         'couriers': 'data/courier.json',
         'managers': 'data/managers.json'
     }
@@ -37,7 +38,7 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
     users = load_user_data(user_type)
 
     id_fields = {
-        'users': 'customer_id',
+        'customers': 'customer_id',
         'couriers': 'courier_id',
         'managers': 'manager_id'
     }
@@ -73,7 +74,7 @@ def login_page(user_type: str) -> Union[str, Response]:
 
 @app.route("/authenticate", methods=['POST'])
 def authenticate() -> Union[str, Response]:
-    user_type = request.form.get('user_type') or 'users'
+    user_type = request.form.get('user_type') or 'customers'
     user_id = request.form.get('username') or ''
     password = request.form.get('password') or ''
     if not all([user_type, user_id, password]):
@@ -86,7 +87,7 @@ def authenticate() -> Union[str, Response]:
         session['user'] = user
         session['user_type'] = user_type
         session['user_id'] = user_id
-        return redirect(url_for('dashboard', user_type=user_type))
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
     else:
         error_message = 'Wrong credentials. Please try again.'
@@ -132,9 +133,9 @@ def create_new_order(user_type: str) -> Union[str, Response]:
         return redirect(url_for('login_page', user_type=user_type))
 
     # Check if user is a customer (not courier or manager)
-    if session.get('user_type') != 'users':
+    if session.get('user_type') != 'customers':
         flash('Only customers can create orders')
-        return redirect(url_for('login_page', user_type=user_type))
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
     # Check if user has a valid ID
     if not session.get('user_id'):
