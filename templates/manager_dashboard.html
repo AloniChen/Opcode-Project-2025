@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="body.dashboard-page">
+<body class="dashboard-page">
     <h1 class="manager-title">Manager Dashboard</h1>
 
     <div class="manager-container">
@@ -25,9 +25,19 @@
             </div>
             <div class="overview-box lightGray-box">
                 <p>Total Deliveries</p>
-                <h3>87</h3>
+                <h3 id="totalOrders">—</h3>
             </div>
         </div>
+        <script>
+            async function updateOrderCount() {
+                const res = await fetch('/api/orders/count');
+                const data = await res.json();
+                document.getElementById('totalOrders').textContent = data.count;
+            }
+            updateOrderCount();
+            setInterval(updateOrderCount, 5000);
+        </script>
+
 
         <!-- Section: Active Orders -->
         <h2 class="section-title">Active Orders</h2>
@@ -67,148 +77,107 @@
                 <canvas id="pie4"></canvas>
             </div>
         </div>
-    </div>
-    <script src="{{ url_for('static', filename='js/delivery-charts.js') }}"></script>
-
-    <script>
-        const pieDataList = [
-            {
-                labels: ["created", "confirmed", "delivered", "canceled", "on-delivery"],
-                values: [35, 25, 20, 20, 25]
-            },
-            {
-                labels: ['Tel Aviv', 'Haifa', 'Jerusalem', 'Beer Sheva'],
-                values: [30, 30, 20, 20]
-            },
-            {
-                labels: ['Morning', 'Afternoon', 'Evening'],
-                values: [40, 35, 25]
-            },
-            {
-                labels: ['Fast', 'Standard', 'Delayed'],
-                values: [50, 30, 20]
-            }
-        ];
-
-        const pieColors = [
-            'rgba(246, 189, 26, 0.8)', // כתום
-            'rgba(246, 189, 26, 0.5)', // כתום בהיר
-            'rgba(72, 72, 73, 0.7)',   // אפור כהה
-            'rgba(119, 119, 119, 0.4)', // אפור בהיר
-            'rgba(200, 200, 200, 0.6)'
-        ];
-
-        async function renderStatusPieChart() {
-            const response = await fetch('/api/orders');
-            const orders = await response.json();
-
-            // Count statuses
-            const statusCounts = {};
-            orders.forEach(order => {
-                const status = order.status;
-                statusCounts[status] = (statusCounts[status] || 0) + 1;
-            });
-
-            const labels = Object.keys(statusCounts);
-            const values = Object.values(statusCounts);
-            const colors = pieColors.slice(0, labels.length);
-
-            const ctx = document.getElementById('statusPieChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
+        <!--
+        <script src="{{ url_for('static', filename='js/delivery-charts.js') }}"></script>
+        -->
+        <script>
+            const pieDataList = [
+                {
+                    labels: ["created", "confirmed", "delivered", "canceled", "on-delivery"],
+                    values: [35, 25, 20, 20, 25]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        renderStatusPieChart();
-
-        pieDataList.forEach((data, index) => {
-            const ctx = document.getElementById(`pie${index + 1}`).getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        data: data.values,
-                        backgroundColor: pieColors.slice(0, data.values.length),
-                        borderWidth: 1
-                    }]
+                {
+                    labels: ['Tel Aviv', 'Haifa', 'Jerusalem', 'Beer Sheva'],
+                    values: [30, 30, 20, 20]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
+                {
+                    labels: ['Morning', 'Afternoon', 'Evening'],
+                    values: [40, 35, 25]
+                },
+                {
+                    labels: ['Fast', 'Standard', 'Delayed'],
+                    values: [50, 30, 20]
                 }
-            });
-        });
-    </script>
-    <script>
-        let chart;
+            ];
 
-        async function fetchDataAndUpdateChart() {
-            const response = await fetch('/api/deliveries');
-            const data = await response.json();
+            const pieColors = [
+                'rgba(246, 189, 26, 0.8)', // כתום
+                'rgba(246, 189, 26, 0.5)', // כתום בהיר
+                'rgba(72, 72, 73, 0.7)',   // אפור כהה
+                'rgba(119, 119, 119, 0.4)', // אפור בהיר
+                'rgba(200, 200, 200, 0.6)'
+            ];
 
-            const labels = data.labels;
-            const values = data.values;
 
-            if (!chart) {
-                const ctx = document.getElementById('deliveriesChart').getContext('2d');
-                chart = new Chart(ctx, {
-                    type: 'line',
+            pieDataList.forEach((data, index) => {
+                const ctx = document.getElementById(`pie${index + 1}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
                     data: {
-                        labels: labels,
+                        labels: data.labels,
                         datasets: [{
-                            label: 'Deliveries',
-                            data: values,
-                            backgroundColor: 'rgba(246, 189, 26, 0.2)',
-                            borderColor: '#F6BD1A',
-                            borderWidth: 2,
-                            fill: true,
+                            data: data.values,
+                            backgroundColor: pieColors.slice(0, data.values.length),
+                            borderWidth: 1
                         }]
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
                             }
                         }
                     }
                 });
-            } else {
-                chart.data.labels = labels;
-                chart.data.datasets[0].data = values;
-                chart.update();
+            });
+        </script>
+        <script>
+            let chart;
+
+            async function fetchDataAndUpdateChart() {
+                const response = await fetch('/api/deliveries');
+                const data = await response.json();
+
+                const labels = data.labels;
+                const values = data.values;
+
+                if (!chart) {
+                    const ctx = document.getElementById('deliveriesChart').getContext('2d');
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Deliveries',
+                                data: values,
+                                backgroundColor: 'rgba(246, 189, 26, 0.2)',
+                                borderColor: '#F6BD1A',
+                                borderWidth: 2,
+                                fill: true,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    chart.data.labels = labels;
+                    chart.data.datasets[0].data = values;
+                    chart.update();
+                }
             }
-        }
 
-        // Run once + every 10 seconds
-        fetchDataAndUpdateChart();
-        setInterval(fetchDataAndUpdateChart, 10000);
-    </script>
-
+            // Run once + every 10 seconds
+            fetchDataAndUpdateChart();
+            setInterval(fetchDataAndUpdateChart, 10000);
+        </script>
     </div>
-
-
 </body>
 
 </html>

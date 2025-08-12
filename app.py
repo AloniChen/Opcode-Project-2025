@@ -1,17 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from datetime import datetime, timedelta
 from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
 import json
 from dispatch_system import DispatchSystem
-from flask import jsonify
 import random
-from datetime import datetime, timedelta
+from collections import Counter
+
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True 
 app.secret_key = 'your-secret-key-change-this'
 
-ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
+ds = DispatchSystem(
+    "managers.json",
+    "addresses.json",
+    orders_file="orders.json",
+    couriers_file="couriers.json",
+    customers_file="customers.json",
+)
+
+orders = ds.view_orders()
+print(orders)
 
 def load_user_data(user_type: str) -> List[Dict[str, Any]]:
     file_mapping = {
@@ -78,20 +88,20 @@ def authenticate() -> Union[str, Response]:
         session['user'] = user
         session['user_type'] = user_type
         session['user_id'] = user_id
-        return redirect(url_for('dashboard', user_type=user_type))
+        return redirect(url_for('manager_dashboard', user_type=user_type))
     
     else:
         error_message = 'Wrong credentials. Please try again.'
         return render_template("login.html", user_type=user_type, error_message=error_message)
 
-@app.route("/dashboard/<user_type>")
-def dashboard(user_type: str) -> Union[str, Response]:
+@app.route("/manager_dashboard/<user_type>")
+def manager_dashboard(user_type: str) -> Union[str, Response]:
     if 'user' not in session:
         flash('Please log in first')
         return redirect(url_for('login_page', user_type=user_type))
     
     user = session['user']
-    return render_template("dashboard.html", user=user, user_type=user_type)
+    return render_template("manager_dashboard.html", user=user, user_type=user_type)
 
 @app.route("/signup/<user_type>")
 def signup(user_type: str) -> str:
@@ -102,10 +112,6 @@ def show_all_orders() -> str:
     orders = ds.view_orders()
     orders_dicts = [order.to_dict() for order in orders]
     return render_template("order_list.html", orders=orders_dicts)
-
-@app.route("/manager_dashboard")
-def manager_dashboard():
-    return render_template("manager_dashboard.html")
 
 @app.route('/api/deliveries')
 def get_delivery_data():
@@ -118,6 +124,14 @@ def get_delivery_data():
         'labels': labels,
         'values': values
     })
+
+@app.route("/api/orders/count")
+def orders_count():
+    try:
+        orders = ds.view_orders()        # מחזיר רשימת Order
+        return jsonify({"count": len(orders)})
+    except Exception:
+        return jsonify({"count": 0})
 
 @app.route('/api/deliveries_by_region')
 def get_region_data():

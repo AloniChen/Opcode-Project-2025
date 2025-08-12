@@ -10,7 +10,7 @@ from pathlib import Path
 from address import Address
 from order import Order
 from order import PackageStatus
-
+from pathlib import Path
 
 _logger = logging.getLogger(__name__)
 
@@ -20,14 +20,27 @@ class DispatchSystem:
     A class to manage the dispatch system, including couriers and their operations.
     """
 
-    def __init__(self, managers_file: str, address_file: str):
-        managers_file = Path("data\\"+managers_file)
-        address_file = Path("data\\"+address_file)
-        self.managers_file = managers_file
-        if not self.managers_file.exists():
-            self._save_all_managers([])  # Create file if missing
-        self.address_repo = AddressRepository(address_file)
+    def __init__(
+        self,
+        managers_file: str,
+        address_file: str,
+        orders_file: str | None = None,
+        couriers_file: str | None = None,
+        customers_file: str | None = None,
+        ):
+        data_dir = Path("data")
 
+        self.managers_file = data_dir / managers_file
+        self.address_file  = data_dir / address_file
+        self.orders_file   = (data_dir / orders_file)   if orders_file   else None
+        self.couriers_file = (data_dir / couriers_file) if couriers_file else None
+        self.customers_file= (data_dir / customers_file)if customers_file else None
+
+        if not self.managers_file.exists():
+            self._save_all_managers([])
+
+        self.address_repo = AddressRepository(self.address_file)
+    
     def _load_all_managers(self) -> List[dict]:
         try:
             with open(self.managers_file, "r") as file:
@@ -151,7 +164,7 @@ class DispatchSystem:
     @staticmethod
     def view_orders() -> List[Order]:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             orders_list = []
             for order in orders:
@@ -165,7 +178,7 @@ class DispatchSystem:
     @staticmethod
     def find_order_by_package_id(package_id) -> Optional[Order]:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             for order in orders:
                 if order.get("package_id") == package_id:
@@ -181,7 +194,7 @@ class DispatchSystem:
     @staticmethod
     def delete_order(package_id) -> bool:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             new_orders = [order for order in orders if order.get(
                 "package_id") != package_id]
