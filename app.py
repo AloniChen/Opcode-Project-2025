@@ -3,6 +3,10 @@ from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
 import json
 from dispatch_system import DispatchSystem
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
@@ -10,7 +14,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = 'your-secret-key-change-this'
 
 ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
-
 
 def load_user_data(user_type: str) -> List[Dict[str, Any]]:
     file_mapping = {
@@ -47,7 +50,6 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
         user_id_str = str(user.get(id_field, ''))
         if user_id_str == str(user_id) and user.get('password') == password:
             return user
-
     return None
 
 
@@ -58,14 +60,17 @@ def index() -> str:
 
 @app.route("/login/<user_type>")
 def login_page(user_type: str) -> Union[str, Response]:
-    if user_type not in ['users', 'couriers', 'managers']:
+    if user_type not in ['customers', 'couriers', 'managers']:
         flash('Invalid user type')
         return redirect(url_for('index'))
+
+    if 'user' in session:
+        logged_in_user_type = session.get('user_type', user_type)
+        return redirect(url_for('show_all_orders', user_type=logged_in_user_type))
 
     return render_template("login.html", user_type=user_type)
 
 
-@app.route("/authenticate", methods=['POST'])
 @app.route("/authenticate", methods=['POST'])
 def authenticate() -> Union[str, Response]:
     user_type = request.form.get('user_type') or 'users'
@@ -81,7 +86,7 @@ def authenticate() -> Union[str, Response]:
         session['user'] = user
         session['user_type'] = user_type
         session['user_id'] = user_id
-        return redirect(url_for('create_new_order', user_type=user_type))
+        return redirect(url_for('dashboard', user_type=user_type))
 
     else:
         error_message = 'Wrong credentials. Please try again.'
