@@ -1,5 +1,6 @@
 import json
 import logging
+from re import M
 from typing import List, Optional
 from courier import Courier
 from manager import Manager
@@ -19,19 +20,11 @@ class DispatchSystem:
     """
     A class to manage the dispatch system, including couriers and their operations.
     """
-
-    def __init__(
-        self,
-        managers_file: str,
-        address_file: str,
-        orders_file: str | None = None,
-        couriers_file: str | None = None,
-        customers_file: str | None = None,
-        ):
+    def __init__(self, managers_file: str, address_file: str, orders_file: str | None = None,
+        couriers_file: str | None = None, customers_file: str | None = None):
         data_dir = Path("data")
-
-        self.managers_file = data_dir / managers_file
-        self.address_file  = data_dir / address_file
+        self.managers_file: Path = Path("data") / managers_file
+        address_path: Path = Path("data") / address_file
         self.orders_file   = (data_dir / orders_file)   if orders_file   else None
         self.couriers_file = (data_dir / couriers_file) if couriers_file else None
         self.customers_file= (data_dir / customers_file)if customers_file else None
@@ -201,7 +194,7 @@ class DispatchSystem:
             if len(new_orders) == len(orders):
                 print(f"Order {package_id} not found")
                 return False
-            with open("orders.json", "w") as file:
+            with open("data/orders.json", "w") as file:
                 json.dump(new_orders, file, indent=4)
             print(f"Order {package_id} deleted successfully")
             return True
@@ -230,7 +223,7 @@ class DispatchSystem:
         add_customer(customer_dict)
         return True
 
-    def get_customer_by_id(self, customer_id: int) -> Optional[Customer]:
+    def get_customer_by_id(self, customer_id: str) -> Optional[Customer]:
         """
         Returns the Customer object with the given customer_id, or None if not found.
         """
@@ -252,7 +245,7 @@ class DispatchSystem:
         update_customer(customer_dict)
         return True
 
-    def delete_customer(self, customer_id: int) -> bool:
+    def delete_customer(self, customer_id: str) -> bool:
         """
         Deletes a customer by their ID.
         Returns True if deleted successfully, False if customer does not exist.
@@ -262,3 +255,59 @@ class DispatchSystem:
             return False
         delete_customer(customer_id)
         return True
+
+    def assign_closest_courier_to_order(self, package_id) -> bool:
+        """
+        Assigns the closest courier to the order by calculating the distance between
+        the courier's current_location and the order's destination_id using their Address coordinates.
+        Assumes all couriers are available.
+        Returns True if successful, False otherwise.
+        """
+        order = self.find_order_by_package_id(package_id)
+        if not order:
+            _logger.error(f"Order with package ID {package_id} not found.")
+            return False
+
+        couriers = Courier.read_couriers()
+        if not couriers:
+            _logger.error("No couriers available.")
+            return False
+
+        # Get Address objects for destination and couriers' locations
+        destination_address = self.get_address_by_id(order._destination_id)
+        if not destination_address:
+            _logger.error(
+                f"Destination address ID {order._destination_id} not found.")
+            return False
+
+        closest_courier = None
+        min_distance = float('inf')
+        for courier in couriers:
+            courier_address = self.get_address_by_id(courier.current_location)
+            if not courier_address or not courier_address.coordinates or not destination_address.coordinates:
+                continue
+            # Calculate Euclidean distance between coordinates
+            x1, y1 = courier_address.coordinates
+            x2, y2 = destination_address.coordinates
+            distance = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+            if distance < min_distance:
+                min_distance = distance
+                closest_courier = courier
+
+        if not closest_courier:
+            _logger.error(
+                "No available couriers with valid addresses to assign.")
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
+            return False
+
+        # Assign the closest courier using the static method
+        if Order.update_by_package_id(order._package_id, "courier_id", closest_courier.courier_id):
+            _logger.info(
+                f"Order {package_id} assigned to courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.CONFIRMED)
+            return True
+        else:
+            _logger.error(
+                f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
+            return False

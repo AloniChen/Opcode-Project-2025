@@ -6,8 +6,9 @@ from enum import Enum
 
 class PackageStatus(Enum):
     CREATED = "created"
-    CONFIRMED = "confirmed"
+    CONFIRMED = "confirmed - assigned to courier"
     DELIVERED = "delivered"
+    NOT_ASSIGNED = "no assigned courier"
     CANCELED = "canceled"
     ON_DELIVERY = "on-delivery"
 
@@ -15,6 +16,7 @@ class PackageStatus(Enum):
 class Order:
     _json_filename = "data/orders.json"
     _package_number = 0
+
     def __init__(self, customer_id, courier_id, origin_id, destination_id, package_id=None, status=PackageStatus.CONFIRMED, auto_save=True):
         if Order._package_number == 0:
             Order._initialize_package_number()
@@ -45,7 +47,8 @@ class Order:
                         orders = json.load(file)
                         if isinstance(orders, list) and orders:
                             # Find the highest package_id and set _package_number to be higher
-                            max_id = max(order.get("package_id", 0) for order in orders)
+                            max_id = max(order.get("package_id", 0)
+                                         for order in orders)
                             cls._package_number = max_id + 1
                         else:
                             cls._package_number = 1

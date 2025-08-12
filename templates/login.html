@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="login-page">
+    <div class="login-container">
+    <div class="user-type-badge">{{ user_type.title() }} Login</div>
+    <h1 class="login-title">DeliverySim Login</h1>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="flash-messages">
@@ -21,15 +24,13 @@
             </div>
         {% endif %}
     {% endwith %}
-    <div class="login-container">
-    <div class="user-type-badge">{{ user_type.title() }} Login</div>
-        <h1 class="login-title">DeliverySim Login</h1>
-        {% if error_message %}
+
+    {% if error_message %}
     <div class="error-message-container">
         <span class="error-text">{{ error_message }}</span>
     </div>
     {% endif %}
-        
+
 
         <form method="POST" action="{{ url_for('authenticate') }}" id="loginForm">
             <input type="hidden" name="user_type" value="{{ user_type }}">
@@ -44,10 +45,10 @@
             </div>
 
             <button type="submit" class="login-button">Sign In</button>
-            
+
         </form>
 
-        {% if user_type in ['users', 'couriers'] %}
+        {% if user_type in ['customers'] %}
         <div class="signup-section" style="margin-top: 15px;">
     <a href="{{ url_for('signup', user_type=user_type) }}" class="signup-button">Create New Account</a>
 </div>
