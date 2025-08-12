@@ -133,9 +133,8 @@ def create_new_order(user_type: str) -> Union[str, Response]:
 
     # Check if user has a valid ID
     if not session.get('user_id'):
-        flash('Invalid user session. Please log in again.')
+        flash('Invalid user. Please log in again.')
         return redirect(url_for('login_page', user_type=user_type))
-    print(f"[DEBUG] User ID: {session['user_id']}")
 
     return render_template("create_new_order.html", user_type=user_type)
 
@@ -196,8 +195,31 @@ def create_order() -> Union[str, Response]:
         order = ds.add_order(order_data)
 
         if order:
-            flash('Order created successfully!')
-            return redirect(url_for('show_all_orders'))
+            # Assign closest courier to the order
+            assignment_success = ds.assign_closest_courier_to_order(
+                order._package_id)
+
+            if assignment_success:
+                # Get the updated order with courier assignment
+                updated_order = ds.find_order_by_package_id(order._package_id)
+                if updated_order and updated_order._courier_id:
+                    # Get the assigned courier
+                    assigned_courier = ds.get_courier_by_id(
+                        updated_order._courier_id)
+                    if assigned_courier:
+                        # Update the order's origin_id to courier's current location
+                        from order import Order
+                        Order.update_by_package_id(
+                            order._package_id, "origin_id", assigned_courier.current_location)
+                        flash('Order created successfully and assigned to courier!')
+                    else:
+                        flash('Order created but courier assignment failed!')
+                else:
+                    flash('Order created but courier assignment failed!')
+            else:
+                flash('Order created but no available courier could be assigned!')
+
+            return redirect(url_for('order_list', user_type=session.get('user_type', 'users')))
         else:
             flash('Failed to create order')
             return render_template("create_new_order.html")

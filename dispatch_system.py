@@ -167,7 +167,7 @@ class DispatchSystem:
     @staticmethod
     def find_order_by_package_id(package_id) -> Optional[Order]:
         try:
-            with open("orders.json", "r") as file:
+            with open("data/orders.json", "r") as file:
                 orders = json.load(file)
             for order in orders:
                 if order.get("package_id") == package_id:
