@@ -215,7 +215,8 @@ def create_order() -> Union[str, Response]:
                         updated_order._courier_id)
                     if assigned_courier:
                         # Update the order's origin_id to courier's current location
-                        Order.update_by_package_id(order._package_id, "origin_id", assigned_courier.current_location)
+                        Order.update_by_package_id(
+                            order._package_id, "origin_id", assigned_courier.current_location)
                         flash('Order created successfully and assigned to courier!')
                     else:
                         flash('Order created but courier assignment failed!')
@@ -235,6 +236,13 @@ def create_order() -> Union[str, Response]:
     except Exception as e:
         flash(f'Error creating order: {str(e)}')
         return render_template("create_new_order.html")
+
+
+@app.route("/logout")
+def logout() -> Response:
+    session.clear()
+    flash('You have been logged out successfully')
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
