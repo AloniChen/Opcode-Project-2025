@@ -1,5 +1,6 @@
 import json
 import logging
+from re import M
 from typing import List, Optional
 from courier import Courier
 from manager import Manager
@@ -193,7 +194,7 @@ class DispatchSystem:
             if len(new_orders) == len(orders):
                 print(f"Order {package_id} not found")
                 return False
-            with open("orders.json", "w") as file:
+            with open("data/orders.json", "w") as file:
                 json.dump(new_orders, file, indent=4)
             print(f"Order {package_id} deleted successfully")
             return True
@@ -266,11 +267,6 @@ class DispatchSystem:
         if not order:
             _logger.error(f"Order with package ID {package_id} not found.")
             return False
-        courier_id = getattr(order, "courier_id", None)
-        if courier_id:
-            _logger.error(
-                f"Order {package_id} is already assigned to a courier.")
-            return False
 
         couriers = Courier.read_couriers()
         if not couriers:
@@ -301,14 +297,17 @@ class DispatchSystem:
         if not closest_courier:
             _logger.error(
                 "No available couriers with valid addresses to assign.")
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
             return False
 
         # Assign the closest courier using the static method
         if Order.update_by_package_id(order._package_id, "courier_id", closest_courier.courier_id):
             _logger.info(
                 f"Order {package_id} assigned to courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.CONFIRMED)
             return True
         else:
             _logger.error(
                 f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
+            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
             return False

@@ -31,6 +31,20 @@
         </ul>
     </section>
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                        <button onclick="this.parentElement.style.display='none'">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
     <div class="features-section">
         <div class="feature-card" onclick="goToLogin('customers')">
             <div class="feature-icon">
