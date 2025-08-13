@@ -297,17 +297,19 @@ class DispatchSystem:
         if not closest_courier:
             _logger.error(
                 "No available couriers with valid addresses to assign.")
-            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
+            self.update_order_status(
+                package_id, PackageStatus.NOT_ASSIGNED.value)
             return False
 
         # Assign the closest courier using the static method
         if Order.update_by_package_id(order._package_id, "courier_id", closest_courier.courier_id):
             _logger.info(
                 f"Order {package_id} assigned to courier {closest_courier.courier_id}.")
-            self.update_order_status(package_id, PackageStatus.CONFIRMED)
+            self.update_order_status(package_id, PackageStatus.CONFIRMED.value)
             return True
         else:
             _logger.error(
                 f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
-            self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
+            self.update_order_status(
+                package_id, PackageStatus.NOT_ASSIGNED.value)
             return False
