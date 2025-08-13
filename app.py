@@ -16,6 +16,7 @@ app.secret_key = 'your-secret-key-change-this'
 
 ds: DispatchSystem = DispatchSystem("managers.json", "addresses.json")
 
+
 def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[Dict[str, Any]]:
     """
     Authenticate user using DispatchSystem methods
@@ -24,11 +25,11 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
         if user_type == 'managers':
             manager = ds.get_manager_by_id(user_id)
             if manager and getattr(manager, 'password', None) == password:
-                return manager.to_dict()    
+                return manager.to_dict()
         elif user_type == 'customers':
             customer = ds.get_customer_by_id(user_id)
             if customer and getattr(customer, 'password', None) == password:
-                return customer.to_dict()  
+                return customer.to_dict()
         elif user_type == 'couriers':
             courier = ds.get_courier_by_id(int(user_id))
             if courier and getattr(courier, 'password', None) == password:
@@ -40,7 +41,11 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
 
 
 @app.route("/")
-def index() -> str:
+def index() -> Union[str, Response]:
+    if 'user' in session:
+        logged_in_user_type = session.get('user_type')
+        if logged_in_user_type:
+            return redirect(url_for('show_all_orders', user_type=logged_in_user_type))
     return render_template("index.html")
 
 
