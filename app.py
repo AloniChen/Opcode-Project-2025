@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
-import json
+from order import Order
 from dispatch_system import DispatchSystem
+import json
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -214,9 +215,7 @@ def create_order() -> Union[str, Response]:
                         updated_order._courier_id)
                     if assigned_courier:
                         # Update the order's origin_id to courier's current location
-                        from order import Order
-                        Order.update_by_package_id(
-                            order._package_id, "origin_id", assigned_courier.current_location)
+                        Order.update_by_package_id(order._package_id, "origin_id", assigned_courier.current_location)
                         flash('Order created successfully and assigned to courier!')
                     else:
                         flash('Order created but courier assignment failed!')
