@@ -25,7 +25,7 @@ def authenticate_user(user_type: str, user_id: str, password: str) -> Optional[D
             manager = ds.get_manager_by_id(user_id)
             if manager and getattr(manager, 'password', None) == password:
                 return manager.to_dict()    
-        elif user_type == 'users':
+        elif user_type == 'customers':
             customer = ds.get_customer_by_id(user_id)
             if customer and getattr(customer, 'password', None) == password:
                 return customer.to_dict()  
