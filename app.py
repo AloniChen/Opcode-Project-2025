@@ -7,6 +7,7 @@ from dispatch_system import DispatchSystem
 import random
 from collections import Counter
 import logging
+from order import Order
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,13 +20,13 @@ app.secret_key = 'your-secret-key-change-this'
 ds = DispatchSystem(
     "managers.json",
     "addresses.json",
-    orders_file="orders.json",
-    couriers_file="couriers.json",
-    customers_file="customers.json",
+    "orders.json",
+    "couriers.json",
+    "customers.json"
 )
 
-orders = ds.view_orders()
-print(orders)
+# orders = ds.view_orders()
+# print(orders)
 
 
 def load_user_data(user_type: str) -> List[Dict[str, Any]]:
@@ -107,6 +108,7 @@ def authenticate() -> Union[str, Response]:
             f"[DEBUG] Authentication failed for user_id: {user_id}, user_type: {user_type}")
         return render_template("login.html", user_type=user_type, error_message=error_message)
 
+
 @app.route("/manager_dashboard/<user_type>")
 def manager_dashboard(user_type: str) -> Union[str, Response]:
     if 'user' not in session:
@@ -125,20 +127,33 @@ def signup(user_type: str) -> str:
 @app.route("/orders")
 def show_all_orders() -> str:
     orders = ds.view_orders()
-    orders_dicts = [order.to_dict() for order in orders]
+    orders_dicts = []
+    for order in orders:
+        order_dict = {
+            'package_id': order._package_id,
+            'customer_id': order._customer_id,
+            'courier_id': order._courier_id,
+            'origin_id': order._origin_id,
+            'destination_id': order._destination_id,
+            'status': order._status.value if hasattr(order._status, 'value') else str(order._status)
+        }
+        orders_dicts.append(order_dict)
     return render_template("order_list.html", orders=orders_dicts)
+
 
 @app.route('/api/deliveries')
 def get_delivery_data():
     # דוגמה לנתונים מזויפים – כל רענון מחזיר מספרים חדשים
     now = datetime.now()
-    labels = [(now - timedelta(hours=i)).strftime('%H:%M') for i in reversed(range(6))]
+    labels = [(now - timedelta(hours=i)).strftime('%H:%M')
+              for i in reversed(range(6))]
     values = [random.randint(50, 150) for _ in range(6)]
 
     return jsonify({
         'labels': labels,
         'values': values
     })
+
 
 @app.route("/api/orders/count")
 def orders_count():
@@ -147,6 +162,7 @@ def orders_count():
         return jsonify({"count": len(orders)})
     except Exception:
         return jsonify({"count": 0})
+
 
 @app.route('/api/deliveries_by_region')
 def get_region_data():
@@ -159,17 +175,31 @@ def get_region_data():
         'values': values
     })
 
+
+"""
 @app.route('/api/orders')
 def get_orders():
     with open('orders.json', 'r') as f:
         orders = json.load(f)
 
     return jsonify(orders)
+"""
+
 
 @app.route("/orders/<user_type>")
 def order_list(user_type: str) -> str:
     orders = ds.view_orders()
-    orders_dicts = [order.to_dict() for order in orders]
+    orders_dicts = []
+    for order in orders:
+        order_dict = {
+            'package_id': order._package_id,
+            'customer_id': order._customer_id,
+            'courier_id': order._courier_id,
+            'origin_id': order._origin_id,
+            'destination_id': order._destination_id,
+            'status': order._status.value if hasattr(order._status, 'value') else str(order._status)
+        }
+        orders_dicts.append(order_dict)
     return render_template("order_list.html", orders=orders_dicts, user_type=user_type)
 
 
@@ -262,7 +292,7 @@ def create_order() -> Union[str, Response]:
                         updated_order._courier_id)
                     if assigned_courier:
                         # Update the order's origin_id to courier's current location
-                        from order import Order
+
                         Order.update_by_package_id(
                             order._package_id, "origin_id", assigned_courier.current_location)
                         flash('Order created successfully and assigned to courier!')

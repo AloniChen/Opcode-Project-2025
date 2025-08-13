@@ -20,20 +20,23 @@ class DispatchSystem:
     """
     A class to manage the dispatch system, including couriers and their operations.
     """
+
     def __init__(self, managers_file: str, address_file: str, orders_file: str | None = None,
-        couriers_file: str | None = None, customers_file: str | None = None):
+                 couriers_file: str | None = None, customers_file: str | None = None):
         data_dir = Path("data")
         self.managers_file: Path = Path("data") / managers_file
         address_path: Path = Path("data") / address_file
-        self.orders_file   = (data_dir / orders_file)   if orders_file   else None
-        self.couriers_file = (data_dir / couriers_file) if couriers_file else None
-        self.customers_file= (data_dir / customers_file)if customers_file else None
+        self.orders_file = (data_dir / orders_file) if orders_file else None
+        self.couriers_file = (
+            data_dir / couriers_file) if couriers_file else None
+        self.customers_file = (
+            data_dir / customers_file)if customers_file else None
 
         if not self.managers_file.exists():
             self._save_all_managers([])
 
-        self.address_repo = AddressRepository(self.address_file)
-    
+        self.address_repo = AddressRepository(address_path)
+
     def _load_all_managers(self) -> List[dict]:
         try:
             with open(self.managers_file, "r") as file:
