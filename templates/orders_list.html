@@ -36,19 +36,20 @@
           <span class="cd-marker item-1"></span>
           <ul>
             <li class="selected">
-              <a href="#0"><div class="image-icon"><img src="{{ url_for('static', filename='img/home-icon.png') }}" alt=""></div><h6>Welcome</h6></a>
+              <a href="{{ url_for('show_all_orders', user_type=logged_in_user_type) }}"><div class="image-icon"><img src="{{ url_for('static', filename='img/home-icon.png') }}" alt=""></div><h6><br>HOME</h6></a>
             </li>
             {% if session.get('user_type') == 'customers' %}
             <li>
-              <a href="/new_order"><div class="image-icon"><img src="{{ url_for('static', filename='img/plus_icon.png') }}" alt=""></div><h6>New order</h6></a>
+              <a href="{{ url_for('create_new_order', user_type=user_type) }}"><div class="image-icon"><img src="{{ url_for('static', filename='img/plus_icon.png') }}" alt=""></div><h6>Create<br>New order</h6></a>
             </li>
             {% endif %}
             {% if session.get('user_type') == 'managers' %}
-<li>
-  <a href="{{ url_for('dashboard', user_type=session.get('user_type')) }}"><div class="image-icon"> <img src="{{ url_for('static', filename='img/chart-icon.png') }}" alt="Dashboard Icon"></div><h6>DASHBOARD</h6></a>
-</li>
-{% endif %}
-
+            <li>
+              <a href="{{ url_for('dashboard', user_type=session.get('user_type')) }}"><div class="image-icon"> <img src="{{ url_for('static', filename='img/chart-icon.png') }}" alt="Dashboard Icon"></div><h6><br>DASHBOARD</h6></a>
+            </li>
+            <li><a href=""><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>Add<br>Courier</h6></a></li>
+            {% endif %}
+            <li><a href="{{ url_for('logout') }}"><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6><br>Log Out</h6></a></li>
           </ul>
         </nav>
       </div>
