@@ -95,7 +95,8 @@ def authenticate() -> Union[str, Response]:
         session["user"] = user
         session["user_type"] = user_type
         session["user_id"] = user_id
-        return redirect(url_for("show_all_orders"))
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
+
     else:
         error_message = "Wrong credentials. Please try again."
         return render_template("login.html", user_type=user_type, error_message=error_message)
@@ -115,10 +116,10 @@ def signup(user_type: str) -> str:
     return render_template("signup.html", user_type=user_type)
 
 
-@app.route("/orders")
-def show_all_orders():
+@app.route("/orders/<user_type>")
+def show_all_orders(user_type: str) -> Union[str, Response]:
     # Require login
-    user_type = session.get("user_type")
+    user_type = user_type or session.get("user_type")
     user_id = session.get("user_id")
     if not user_type or not user_id:
         flash("You must log in first")
@@ -180,7 +181,7 @@ def order_details_get(package_id: int):
     order = ds.find_order_by_package_id(package_id)
     if not order:
         flash("Order not found")
-        return redirect(url_for("show_all_orders"))
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
     order_ctx = _order_context_for_template(order, ds)
     role = session.get("user_type", "")
@@ -383,7 +384,8 @@ def create_order() -> Union[str, Response]:
             else:
                 flash('Order created but no available courier could be assigned!')
 
-            return redirect(url_for('order_list', user_type=session.get('user_type', 'users')))
+            return redirect(url_for('show_all_orders'), user_type=session.get('user_type'))
+
         else:
             flash('Failed to create order')
             return render_template("create_new_order.html")
@@ -404,4 +406,4 @@ def logout() -> Response:
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

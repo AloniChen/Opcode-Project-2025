@@ -150,7 +150,8 @@
     {% endif %}
 
     <hr>
-    <a href="/orders" class="btn btn-secondary w-100">← Back to Orders</a>
+    <a href="{{ url_for('show_all_orders', user_type=session.get('user_type')) }}" class="btn btn-secondary w-100">← Back to Orders</a>
+
   </div>
 </body>
 </html>
