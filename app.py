@@ -188,16 +188,6 @@ def get_region_data():
     })
 
 
-"""
-@app.route('/api/orders')
-def get_orders():
-    with open('orders.json', 'r') as f:
-        orders = json.load(f)
-
-    return jsonify(orders)
-"""
-
-
 @app.route("/orders/<user_type>")
 def order_list(user_type: str) -> str:
     orders = ds.view_orders()
