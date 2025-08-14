@@ -14,36 +14,21 @@
     <section class="welcome-page">
 
         <ul class="welcome">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash-message">
-                {{ messages[0] }}
-                </div>
-            {% endif %}
-            {% endwith %}
-
             <li class="selected">
                 <div class="heading">
                     <h1>DeliverySim</h1>
                     <span>Welcome to DeliverySim</span>
                 </div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                                <span class="error-text-logged-out">{{ message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             </li>
         </ul>
     </section>
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for message in messages %}
-                    <div class="flash-message">
-                        {{ message }}
-                        <button onclick="this.parentElement.style.display='none'">×</button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
 
     <div class="features-section">
         <div class="feature-card" onclick="goToLogin('customers')">
@@ -83,13 +68,13 @@
             </div>
             <h3>Managers</h3>
             <p>Access management dashboard and oversee operations.</p>
-        </div>
+        </div>        
         <script>
-function goToLogin(userType) {
-        var baseUrl = window.location.origin;
-    window.location.href = baseUrl + '/login/' + userType;
-}
-</script>
+        function goToLogin(userType) {
+            var baseUrl = window.location.origin;
+            window.location.href = baseUrl + '/login/' + userType;
+        }
+        </script>
     </div>
 </body>
 </html>

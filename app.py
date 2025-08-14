@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, Response, flash, url_for
+from flask import Flask, render_template, request, redirect, session, Response, flash, url_for, get_flashed_messages
 from werkzeug.wrappers import Response
 from typing import Union, List, Dict, Any, Optional
 from order import Order, PackageStatus
@@ -71,7 +71,6 @@ def index() -> Union[str, Response]:
         if logged_in_user_type:
             return redirect(url_for('show_all_orders', user_type=logged_in_user_type))
     return render_template("index.html")
-
 
 @app.route("/login/<user_type>")
 def login_page(user_type: str) -> Union[str, Response]:
@@ -385,9 +384,10 @@ def create_order() -> Union[str, Response]:
             flash('Order created but no available courier could be assigned!')
 
         return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
+
     else:
         flash('Failed to create order')
-        return render_template("create_new_order.html", user_type=session.get('user_type'))
+        return render_template("create_new_order.html")
 
 
 @app.route("/logout")

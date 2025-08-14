@@ -12,18 +12,6 @@
     <div class="login-container">
     <div class="user-type-badge">{{ user_type.title() }} Login</div>
     <h1 class="login-title">DeliverySim Login</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for message in messages %}
-                    <div class="flash-message">
-                        {{ message }}
-                        <button onclick="this.parentElement.style.display='none'">×</button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
 
     {% if error_message %}
     <div class="error-message-container">
