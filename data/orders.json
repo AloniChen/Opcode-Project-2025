@@ -38,5 +38,29 @@
     "origin_id": 1,
     "destination_id": 1,
     "status": "canceled"
+  },
+  {
+    "package_id": 6,
+    "customer_id": "123456789",
+    "courier_id": 123456789,
+    "origin_id": 1,
+    "destination_id": 23,
+    "status": "on-delivery"
+  },
+  {
+    "package_id": 7,
+    "customer_id": "123456789",
+    "courier_id": 11,
+    "origin_id": 1,
+    "destination_id": 24,
+    "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 8,
+    "customer_id": "123456789",
+    "courier_id": 22,
+    "origin_id": 15,
+    "destination_id": 25,
+    "status": "confirmed - assigned to courier"
   }
 ]

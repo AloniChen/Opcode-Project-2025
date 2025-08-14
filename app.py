@@ -401,9 +401,8 @@ def create_order() -> Union[str, Response]:
 @app.route("/logout")
 def logout() -> Response:
     session.clear()
-    flash('You have been logged out successfully')
     return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
