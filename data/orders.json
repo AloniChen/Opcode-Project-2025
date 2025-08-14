@@ -78,5 +78,37 @@
     "origin_id": 23,
     "destination_id": 27,
     "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 11,
+    "customer_id": "123456789",
+    "courier_id": 123456789,
+    "origin_id": 24,
+    "destination_id": 28,
+    "status": "delivered"
+  },
+  {
+    "package_id": 12,
+    "customer_id": "123456789",
+    "courier_id": 123456789,
+    "origin_id": 24,
+    "destination_id": 29,
+    "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 13,
+    "customer_id": "123456789",
+    "courier_id": 123456789,
+    "origin_id": 24,
+    "destination_id": 30,
+    "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 14,
+    "customer_id": "123456789",
+    "courier_id": 22,
+    "origin_id": 15,
+    "destination_id": 31,
+    "status": "confirmed - assigned to courier"
   }
 ]

@@ -57,21 +57,27 @@
       <ul class="cd-hero-slider">
         <li class="selected">
           <div class="heading">
-            <h1>Orders List</h1>
-
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash-message">
-                {{ messages[0] }}
-                </div>
-            {% endif %}
-            {% endwith %}
-
-            <span>Manage your orders efficiently</span>
+            <h1>DeliverySim</h1>
+            <span>Welcome to DeliverySim</span>
           </div>
           <div class="cd-full-width first-slide">
             <div class="container">
               <div class="row">
+                <div class="col-lg-12">
+                  <div class="content first-content">
+                        <div class="contact-form">
+                          <h4>Orders List</h4>
+                            <span>Manage your orders efficiently</span>
+                            {% with messages = get_flashed_messages() %}
+                              {% if messages %}
+                                  <div class="flash-message">
+                                  {{ messages[0] }}
+                                  </div>
+                              {% endif %}
+                            {% endwith %}
+                        </div>
+                  </div>
+                </div>
                 <div class="col-md-12">
                   <div class="content first-content">
 

@@ -388,14 +388,14 @@ def create_order() -> Union[str, Response]:
 
         else:
             flash('Failed to create order')
-            return render_template("create_new_order.html")
+            return render_template("orders_list.html")
 
     except ValueError as e:
         flash(f'Invalid input data: {str(e)}')
-        return render_template("create_new_order.html")
+        return render_template("orders_list.html")
     except Exception as e:
         flash(f'Error creating order: {str(e)}')
-        return render_template("create_new_order.html")
+        return render_template("orders_list.html")
 
 
 @app.route("/logout")
