@@ -1,16 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Sign Up - Test Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeliverySim – Create Account</title>
+  <!-- Use your Flask static path -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style_signup.css') }}">
 </head>
-<body class="login-page">
-    <div class="login-container">
-        <h1 style="color: #28a745;">✅ Sign Up Successful!</h1>
-        
-        <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
-    </div>
+<body>
+  <main class="page">
+    <section class="card" aria-labelledby="signup-title">
+      <!-- Role pill (matches the login pill style) -->
+      <div class="pill" aria-live="polite">
+        {{ (user_type or session.get('user_type') or 'customers') | replace('_',' ') | upper }} SIGN UP
+      </div>
+
+      <h1 id="signup-title" class="title">DeliverySim – Create Account</h1>
+
+      <!-- Flash messages placeholder (Flask will render if any) -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for category, msg in messages %}
+              <div class="flash {{ category }}">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form class="form" action="{{ url_for('signup', user_type=(user_type or session.get('user_type') or 'customers')) }}" method="POST" novalidate>
+        <input type="hidden" name="role" value="{{ user_type or session.get('user_type') or 'customers' }}" />
+
+        <div class="grid">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Dana Levi" required />
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+972-50-1234567" required />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" minlength="6" placeholder="At least 6 characters" required />
+          </div>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend>Address</legend>
+          <div class="grid">
+            <div class="field">
+              <label for="address_street">Street</label>
+              <input id="address_street" name="address_street" type="text" placeholder="Herzl" required />
+            </div>
+            <div class="field">
+              <label for="address_house_number">House number</label>
+              <input id="address_house_number" name="address_house_number" type="text" placeholder="12" required />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="address_apartment">Apartment (optional)</label>
+              <input id="address_apartment" name="address_apartment" type="text" placeholder="5A" />
+            </div>
+            <div class="field">
+              <label for="address_floor">Floor (optional)</label>
+              <input id="address_floor" name="address_floor" type="text" placeholder="3" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="address_city">City</label>
+              <input id="address_city" name="address_city" type="text" placeholder="Tel Aviv" required />
+            </div>
+            <div class="field">
+              <label for="address_postal_code">Postal code</label>
+              <input id="address_postal_code" name="address_postal_code" type="text" placeholder="6100000" required />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="address_country">Country</label>
+              <input id="address_country" name="address_country" type="text" value="Israel" required />
+            </div>
+            <div class="field">
+              <label for="address_message">Message to courier (optional)</label>
+              <input id="address_message" name="address_message" type="text" placeholder="Gate code, buzzer, etc." />
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn">Create Account</button>
+
+        <p class="foot">
+          Already have an account?
+          <a class="link" href="{{ url_for('login_users') if 'login_users' in globals() else '/login/users' }}">Log in</a>
+        </p>
+
+        <p class="back">
+          ← <a class="link" href="{{ url_for('home') if 'home' in globals() else '/' }}">Back to Home</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/signup.js') }}" defer></script>
 </body>
 </html>

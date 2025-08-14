@@ -1,0 +1,153 @@
+:root {
+  --bg: #484849;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --primary: #F6BD1A;
+  --ring: 0 0 0 4px rgba(246, 189, 26, 0.25);
+}
+
+/* Base */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(1200px 1200px at 20% -10%, rgba(255,255,255,.08), transparent 60%),
+              radial-gradient(1000px 800px at 120% 20%, rgba(255,255,255,.06), transparent 60%),
+              var(--bg);
+}
+
+/* Layout */
+.page {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 2.25rem;
+}
+
+.card {
+  width: min(720px, 100%);
+  background: var(--card);
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 18px 60px rgba(0,0,0,.35), 0 6px 24px rgba(0,0,0,.18);
+}
+
+/* Pill & Title – mirrored from the login look */
+.pill {
+  display: inline-block;
+  align-self: center;
+  background: var(--primary);
+  color: #111827;
+  font-weight: 700;
+  padding: .55rem 1.1rem;
+  border-radius: 999px;
+  margin: 0 auto 1rem auto;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: clamp(1.6rem, 2.4vw + .8rem, 2.2rem);
+  letter-spacing: .2px;
+}
+
+/* Form */
+.form { margin-top: .5rem; }
+.field { margin-top: 1rem; }
+label {
+  display: inline-block;
+  margin-bottom: .4rem;
+  font-weight: 600;
+}
+input, select {
+  width: 100%;
+  padding: .9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 1rem;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+input::placeholder { color: #9ca3af; }
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--ring);
+}
+
+/* Grid helpers */
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Fieldset */
+.fieldset {
+  margin-top: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1rem;
+}
+.fieldset > legend {
+  padding: 0 .5rem;
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+/* Buttons & links */
+.btn {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: .95rem 1.1rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #111827;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter .15s ease, transform .04s ease;
+}
+.btn:hover { filter: brightness(0.96); }
+.btn:active { transform: translateY(1px); }
+
+.foot {
+  margin-top: .9rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: .95rem;
+}
+.back {
+  text-align: center;
+  margin-top: .35rem;
+  color: var(--muted);
+}
+.link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+}
+.link:hover { text-decoration: underline; }
+
+/* Flash messages */
+.flash-wrap { margin-bottom: 12px; }
+.flash {
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  margin-top: .5rem;
+  font-weight: 600;
+}
+.flash.success { background: #ecfdf5; border: 1px solid #34d399; color: #065f46; }
+.flash.error   { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+
+/* Invalid states */
+input:invalid, select:invalid { border-color: #ef4444; }
+input:invalid:focus, select:invalid:focus { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2); }
