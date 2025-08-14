@@ -307,95 +307,87 @@ def create_new_order(user_type: str) -> Union[str, Response]:
 
 @app.route("/create_order", methods=['POST'])
 def create_order() -> Union[str, Response]:
-    try:
-        # Address data with validation - no customer_id needed
-        street = request.form.get('street', '').strip()
-        house_number_str = request.form.get('house_number', '0')
-        city = request.form.get('city', '').strip()
-        postal_code = request.form.get('postal_code', '').strip()
-        country = request.form.get('country', '').strip()
 
-        if not all([street, house_number_str, city, country]):
-            flash('Street, house number, city and country are required')
-            return render_template("create_new_order.html")
+    # Address data with validation - no customer_id needed
+    street = request.form.get('street', '').strip()
+    house_number_str = request.form.get('house_number', '0')
+    city = request.form.get('city', '').strip()
+    postal_code = request.form.get('postal_code', '').strip()
+    country = request.form.get('country', '').strip()
 
-        house_number = int(house_number_str)
-        apartment_str = request.form.get('apartment', '').strip()
-        apartment = int(
-            apartment_str) if apartment_str and apartment_str.isdigit() else None
+    if not all([street, house_number_str, city, country]):
+        flash('Street, house number, city and country are required')
+        return render_template("create_new_order.html")
 
-        floor_str = request.form.get('floor', '').strip()
-        floor = int(floor_str) if floor_str and floor_str.isdigit() else None
+    house_number = int(house_number_str)
+    apartment_str = request.form.get('apartment', '').strip()
+    apartment = int(
+        apartment_str) if apartment_str and apartment_str.isdigit() else None
 
-        # Special instructions
-        message = request.form.get('message', '').strip()
+    floor_str = request.form.get('floor', '').strip()
+    floor = int(floor_str) if floor_str and floor_str.isdigit() else None
 
-        # Create address data dictionary for DispatchSystem
-        address_data = {
-            'street': street,
-            'house_number': house_number,
-            'city': city,
-            'postal_code': postal_code,
-            'country': country,
-            'apartment': apartment,
-            'floor': floor,
-            'message': message if message else None
-        }
+    # Special instructions
+    message = request.form.get('message', '').strip()
 
-        # Add address using ONLY DispatchSystem methods
-        address = ds.add_address(address_data)
+    # Create address data dictionary for DispatchSystem
+    address_data = {
+        'street': street,
+        'house_number': house_number,
+        'city': city,
+        'postal_code': postal_code,
+        'country': country,
+        'apartment': apartment,
+        'floor': floor,
+        'message': message if message else None
+    }
 
-        # Get customer_id from session if logged in, otherwise use guest
-        customer_id = session.get('user_id', 'GUEST_001')
+    # Add address using ONLY DispatchSystem methods
+    address = ds.add_address(address_data)
 
-        # Create order using Order class through dispatch system
-        order_data = {
-            'customer_id': customer_id,
-            'courier_id': None,  # Will be assigned later by system
-            'origin_id': None,  # Default origin - could be made dynamic
-            'destination_id': address.id,
-            'status': 'created'
-        }
+    # Get customer_id from session if logged in, otherwise use guest
+    customer_id = session.get('user_id', 'GUEST_001')
 
-        # Create order through dispatch system
-        order = ds.add_order(order_data)
+    # Create order using Order class through dispatch system
+    order_data = {
+        'customer_id': customer_id,
+        'courier_id': None,  # Will be assigned later by system
+        'origin_id': None,  # Default origin - could be made dynamic
+        'destination_id': address.id,
+        'status': 'created'
+    }
 
-        if order:
-            # Assign closest courier to the order
-            assignment_success = ds.assign_closest_courier_to_order(
-                order._package_id)
+    # Create order through dispatch system
+    order = ds.add_order(order_data)
 
-            if assignment_success:
-                # Get the updated order with courier assignment
-                updated_order = ds.find_order_by_package_id(order._package_id)
-                if updated_order and updated_order._courier_id:
-                    # Get the assigned courier
-                    assigned_courier = ds.get_courier_by_id(
-                        updated_order._courier_id)
-                    if assigned_courier:
-                        # Update the order's origin_id to courier's current location
-                        Order.update_by_package_id(
-                            order._package_id, "origin_id", assigned_courier.current_location)
-                        flash('Order created successfully and assigned to courier!')
-                    else:
-                        flash('Order created but courier assignment failed!')
+    if order:
+        # Assign closest courier to the order
+        assignment_success = ds.assign_closest_courier_to_order(
+            order._package_id)
+
+        if assignment_success:
+            # Get the updated order with courier assignment
+            updated_order = ds.find_order_by_package_id(order._package_id)
+            if updated_order and updated_order._courier_id:
+                # Get the assigned courier
+                assigned_courier = ds.get_courier_by_id(
+                    updated_order._courier_id)
+                if assigned_courier:
+                    # Update the order's origin_id to courier's current location
+                    Order.update_by_package_id(
+                        order._package_id, "origin_id", assigned_courier.current_location)
+                    flash('Order created successfully and assigned to courier!')
                 else:
                     flash('Order created but courier assignment failed!')
             else:
-                flash('Order created but no available courier could be assigned!')
-
-            return redirect(url_for('show_all_orders'), user_type=session.get('user_type'))
-
+                flash('Order created but courier assignment failed!')
         else:
-            flash('Failed to create order')
-            return render_template("orders_list.html")
+            flash('Order created but no available courier could be assigned!')
 
-    except ValueError as e:
-        flash(f'Invalid input data: {str(e)}')
-        return render_template("orders_list.html")
-    except Exception as e:
-        flash(f'Error creating order: {str(e)}')
-        return render_template("orders_list.html")
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
+    else:
+        flash('Failed to create order')
+        return render_template("create_new_order.html", user_type=session.get('user_type'))
 
 
 @app.route("/logout")
