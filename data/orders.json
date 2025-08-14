@@ -62,5 +62,21 @@
     "origin_id": 15,
     "destination_id": 25,
     "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 9,
+    "customer_id": "123456789",
+    "courier_id": 11,
+    "origin_id": 23,
+    "destination_id": 26,
+    "status": "confirmed - assigned to courier"
+  },
+  {
+    "package_id": 10,
+    "customer_id": "123456789",
+    "courier_id": 11,
+    "origin_id": 23,
+    "destination_id": 27,
+    "status": "confirmed - assigned to courier"
   }
 ]

@@ -58,6 +58,15 @@
         <li class="selected">
           <div class="heading">
             <h1>Orders List</h1>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                {{ messages[0] }}
+                </div>
+            {% endif %}
+            {% endwith %}
+
             <span>Manage your orders efficiently</span>
           </div>
           <div class="cd-full-width first-slide">

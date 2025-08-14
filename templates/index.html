@@ -15,12 +15,12 @@
 
         <ul class="welcome">
             {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="flash-message">
-      {{ messages[0] }}
-    </div>
-  {% endif %}
-{% endwith %}
+            {% if messages %}
+                <div class="flash-message">
+                {{ messages[0] }}
+                </div>
+            {% endif %}
+            {% endwith %}
 
             <li class="selected">
                 <div class="heading">

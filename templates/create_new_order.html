@@ -93,6 +93,15 @@ https://templatemo.com/tm-503-newline
                         <div class="contact-form">
                           <form id="contact" action="/create_order" method="post">
                             <div class="row">
+
+                              {% with messages = get_flashed_messages() %}
+                              {% if messages %}
+                                  <div class="flash-message">
+                                  {{ messages[0] }}
+                                  </div>
+                              {% endif %}
+                              {% endwith %}
+
                               <div class="col-lg-12">
                                   <h4>Create Your Order</h4>
                               </div>
