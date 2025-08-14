@@ -4,13 +4,49 @@
 <head>
     <meta charset="utf-8">
     <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontAwesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
+      <link rel="style" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body class="body.dashboard-page">
+
+    <section class="cd-hero">
+      <div class="cd-slider-nav">
+        <nav>
+          <span class="cd-marker item-1"></span>
+          <ul>
+            <li class="selected">
+              <a href="{{ url_for('show_all_orders',  user_type=session.get('user_type')) }}"><div class="image-icon"><img src="{{ url_for('static', filename='img/home-icon.png') }}" alt=""></div><h6><br>HOME</h6></a>
+            </li>
+            {% if session.get('user_type') == 'customers' %}
+            <li>
+              <a href="{{ url_for('create_new_order',  user_type=session.get('user_type')) }}"><div class="image-icon"><img src="{{ url_for('static', filename='img/plus_icon.png') }}" alt=""></div><h6>Create<br>New order</h6></a>
+            </li>
+            {% endif %}
+            {% if session.get('user_type') == 'managers' %}
+            <li>
+              <a href="{{ url_for('manager_dashboard', user_type=session.get('user_type')) }}"><div class="image-icon"> <img src="{{ url_for('static', filename='img/chart-icon.png') }}" alt="Dashboard Icon"></div><h6><br>DASHBOARD</h6></a>
+            </li>
+            <li><a href=""><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>Add<br>Courier</h6></a></li>
+            {% endif %}
+            <li><a href="{{ url_for('logout') }}"><div class="image-icon"><img src="../static/img/door.png"></div><h6><br>Log Out</h6></a></li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
     <h1 class="manager-title">Manager Dashboard</h1>
 
     <div class="manager-container">
