@@ -223,7 +223,8 @@ def update_order():
         order = ds.find_order_by_package_id(package_id)
         if not order:
             flash("Order not found")
-            return redirect("/orders")
+            return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
+
         order_ctx = _order_context_for_template(order, ds)
         return render_template("order_details.html", order=order_ctx, role="managers", message=message)
 
@@ -239,7 +240,8 @@ def update_order():
         order = ds.find_order_by_package_id(package_id)
         if not order:
             flash("Order not found")
-            return redirect("/orders")
+            return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
+
         order_ctx = _order_context_for_template(order, ds)
         return render_template("order_details.html", order=order_ctx, role="managers", message=message)
 
@@ -248,11 +250,11 @@ def update_order():
             package_id, PackageStatus.CANCELED.value)
         flash("Order canceled." if success else "Cancel failed.")
         # after cancel – go back to list
-        return redirect("/orders")
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
     else:
         flash("Unknown action.")
-        return redirect("/orders")
+        return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
 
 @app.route("/update_status", methods=["POST"])
@@ -277,7 +279,7 @@ def update_status():
     # Save as string to JSON
     success = ds.update_order_status(package_id, enum_status.value)
     flash("Status updated." if success else "Update failed.")
-    return redirect("/orders")
+    return redirect(url_for('show_all_orders', user_type=session.get('user_type')))
 
 
 @app.route("/new_order")
@@ -397,4 +399,4 @@ def logout() -> Response:
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
