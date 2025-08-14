@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>orders list</title>
+    <title>DeliverySim - Orders List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Prefer url_for for all static assets -->
@@ -11,20 +11,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fontAwesome.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
+      <link rel="style" href="{{ url_for('static', filename='css/style.css') }}">
+
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
 
     <style>
-      .custom-table .label { display: inline-block; padding: 4px 8px; border-radius: 4px; }
-      .label-success { background:#5cb85c; color:#fff; }
-      .label-danger  { background:#d9534f; color:#fff; }
-      .label-info    { background:#5bc0de; color:#fff; }
-      .label-warning { background:#f0ad4e; color:#fff; }
-      .label-default { background:#777;   color:#fff; }
-      .cd-hero .heading { text-align:center; margin-top: 20px; }
-      .table-responsive { margin-top: 24px; }
-      tr[onclick] { cursor: pointer; }
+      
     </style>
   </head>
   <body>
@@ -49,7 +43,7 @@
             </li>
             <li><a href=""><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>Add<br>Courier</h6></a></li>
             {% endif %}
-            <li><a href="{{ url_for('logout') }}"><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6><br>Log Out</h6></a></li>
+            <li><a href="{{ url_for('logout') }}"><div class="image-icon"><img src="../static/img/door.png"></div><h6><br>Log Out</h6></a></li>
           </ul>
         </nav>
       </div>
@@ -68,12 +62,19 @@
                         <div class="contact-form">
                           <h4>Orders List</h4>
                             <span>Manage your orders efficiently</span>
+                            <br>
+                            <br>
                             {% with messages = get_flashed_messages() %}
-                              {% if messages %}
-                                  <div class="flash-message">
-                                  {{ messages[0] }}
-                                  </div>
-                              {% endif %}
+                                {% if messages %}
+                                    <div class="error-message-container">
+                                        {% for message in messages %}
+                                            <div class="error-text">
+                                                {{ message }}
+                                                <button onclick="this.parentElement.style.display='none'">×</button>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             {% endwith %}
                         </div>
 
@@ -139,7 +140,8 @@
     </section>
 
     <footer>
-      <p>Copyright &copy; 2020 Your Company | Designed by <em>Template Mo</em></p>
+          <p>
+        	<em></em></p>
     </footer>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

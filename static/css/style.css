@@ -1,3 +1,13 @@
+.custom-table .label { display: inline-block; padding: 4px 8px; border-radius: 4px; }
+.label-success { background:#5cb85c; color:#fff; }
+.label-danger  { background:#d9534f; color:#fff; }
+.label-info    { background:#5bc0de; color:#fff; }
+.label-warning { background:#f0ad4e; color:#fff; }
+.label-default { background:#777;   color:#fff; }
+.cd-hero .heading { text-align:center; margin-top: 20px; }
+.table-responsive { margin-top: 24px; }
+.tr[onclick] { cursor: pointer; }
+
 body {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
@@ -344,4 +354,12 @@ p {
     .login-title {
         font-size: 24px;
     }
+}
+
+.error-text-logged-out {
+    color: #ffffff;
+    font-size: 13px;
+    display: block;
+    text-align: center;
+    width: 100%;
 }

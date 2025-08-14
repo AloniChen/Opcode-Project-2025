@@ -142,5 +142,13 @@
     "origin_id": null,
     "destination_id": 5,
     "status": "no assigned courier"
+  },
+  {
+    "package_id": 19,
+    "customer_id": "123456789",
+    "courier_id": null,
+    "origin_id": null,
+    "destination_id": 6,
+    "status": "no assigned courier"
   }
 ]
