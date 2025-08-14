@@ -1,5 +1,5 @@
 class Customer:
-    def __init__(self, name, customer_id, phone_number, email, password, credit):
+    def __init__(self, name, customer_id, phone_number, email, password, credit = 0):
 
         self.name = name
         self.customer_id = customer_id

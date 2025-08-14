@@ -1,7 +1,7 @@
 import json
 import logging
 from re import M
-from typing import List, Optional
+from typing import List, Optional, Iterable, Union, List
 from courier import Courier
 from manager import Manager
 from customer import Customer
@@ -307,3 +307,85 @@ class DispatchSystem:
                 f"Failed to update order {package_id} with courier {closest_courier.courier_id}.")
             self.update_order_status(package_id, PackageStatus.NOT_ASSIGNED)
             return False
+
+ # --- Helper: decide if an order status means "still waiting to be delivered" ---
+    def _status_is_waiting(self, status: Union[str, PackageStatus]) -> bool:
+        """
+        Returns True for non-terminal statuses (i.e., not delivered/cancelled/returned/failed).
+        Works whether `status` is a string or a PackageStatus enum member.
+        """
+        # Collect terminal statuses in both enum and string form (defensive; enum may vary)
+        terminal_names = {"DELIVERED", "CANCELLED", "RETURNED", "FAILED"}
+        try:
+            # If it's an enum, compare by identity/name
+            if isinstance(status, PackageStatus):
+                name = getattr(status, "name", "").upper()
+                return name not in terminal_names
+        except Exception:
+            pass
+
+        # Assume string otherwise
+        if isinstance(status, str):
+            return status.upper() not in terminal_names
+
+        # Unknown type → treat as waiting (conservative)
+        return True
+
+    def get_counterparties_with_waiting_deliveries(
+        self,
+        user: Union[Courier, Customer]
+    ) -> List[Union[Customer, Courier]]:
+        """
+        Given a Courier → returns unique Customers that have orders assigned to that courier
+        whose status is still waiting to be delivered.
+
+        Given a Customer → returns unique Couriers that have orders to deliver for that customer
+        whose status is still waiting to be delivered.
+        """
+        orders = self.view_orders()
+        results: List[Union[Customer, Courier]] = []
+
+        if isinstance(user, Courier):
+            # Filter orders for this courier and "waiting" statuses
+            customer_ids = {
+                getattr(o, "_Order__customer_id", None) if hasattr(o, "_Order__customer_id") else getattr(o, "customer_id", None)
+                for o in orders
+                if getattr(o, "courier_id", getattr(o, "_Order__courier_id", None)) == user.courier_id
+                and self._status_is_waiting(getattr(o, "status", getattr(o, "_Order__status", None)))
+            }
+            # Map to Customer objects
+            results = [self.get_customer_by_id(cid) for cid in customer_ids if cid]
+            return [c for c in results if c is not None]
+
+        if isinstance(user, Customer):
+            # Filter orders for this customer and "waiting" statuses
+            courier_ids = {
+                getattr(o, "courier_id", getattr(o, "_Order__courier_id", None))
+                for o in orders
+                if (getattr(o, "customer_id", getattr(o, "_Order__customer_id", None)) == user.customer_id)
+                and self._status_is_waiting(getattr(o, "status", getattr(o, "_Order__status", None)))
+            }
+            # Map to Courier objects
+            results = [self.get_courier_by_id(cid) for cid in courier_ids if cid is not None]
+            return [cr for cr in results if cr is not None]
+
+        # If an unsupported type is passed, return empty list
+        return []
+
+    # --- Convenience wrappers (optional) ---
+    def get_customers_waiting_for_courier(self, courier_id: int) -> List[Customer]:
+        courier = self.get_courier_by_id(courier_id)
+        if not courier:
+            return []
+        out = self.get_counterparties_with_waiting_deliveries(courier)
+        # Narrow typing to Customers only
+        return [c for c in out if isinstance(c, Customer)]
+
+    def get_couriers_waiting_for_customer(self, customer_id: str) -> List[Courier]:
+        customer = self.get_customer_by_id(customer_id)
+        if not customer:
+            return []
+        out = self.get_counterparties_with_waiting_deliveries(customer)
+        # Narrow typing to Couriers only
+        return [cr for cr in out if isinstance(cr, Courier)]
+    

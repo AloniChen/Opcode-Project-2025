@@ -6,5 +6,13 @@
         "email": "adipedel@gmail.com",
         "password": "1234",
         "credit": 55.0
+    },
+    {
+        "name": "Dana Levi",
+        "customer_id": "CUST_1",
+        "phone_number": "+972-50-1234567",
+        "email": "dana@example.com",
+        "password": "Dana123!",
+        "credit": 0.0
     }
 ]

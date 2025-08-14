@@ -45,7 +45,7 @@ https://templatemo.com/tm-503-newline
               <ul>
                 <li class="selected"><a href="#0"><div class="image-icon"><img src="../static/img/home-icon.png"></div><h6><br>Welcome</h6></a></li>
                 <li><a href="{{ url_for('dashboard', user_type=session.get('user_type')) }}"><div class="image-icon"><img src="../static/img/featured-icon.png"></div><h6>Manager<br>Dashboard</h6></a></li>
-                <li><a href="{{ url_for('create_new_order', user_type=session.get('user_type')) }}"><div class="image-icon"><img src="../static/img/contact-icon.png"></div><h6>Create<br>Order</h6></a></li><li><a href=""><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>Create<br>Courier</h6></a></li>
+                <li><a href="{{ url_for('create_new_order', user_type=session.get('user_type')) }}"><div class="image-icon"><img src="../static/img/contact-icon.png"></div><h6>Create<br>Order</h6></a></li><li><a href="{{ url_for('signup_courier') }}"><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6>Create<br>Courier</h6></a></li>
                 <li><a href="{{ url_for('logout') }}"><div class="image-icon"><img src="../static/img/about-icon.png"></div><h6><br>Log out</h6></a></li>
               </ul>
             </nav>
