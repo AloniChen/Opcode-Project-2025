@@ -147,23 +147,6 @@ def signup(user_type: str) -> str:
     return render_template("signup.html", user_type=user_type)
 
 
-@app.route("/orders")
-def show_all_orders() -> str:
-    orders = ds.view_orders()
-    orders_dicts = []
-    for order in orders:
-        order_dict = {
-            'package_id': order._package_id,
-            'customer_id': order._customer_id,
-            'courier_id': order._courier_id,
-            'origin_id': order._origin_id,
-            'destination_id': order._destination_id,
-            'status': order._status.value if hasattr(order._status, 'value') else str(order._status)
-        }
-        orders_dicts.append(order_dict)
-    return render_template("order_list.html", orders=orders_dicts)
-
-
 @app.route('/api/deliveries')
 def get_delivery_data():
     # דוגמה לנתונים מזויפים – כל רענון מחזיר מספרים חדשים
@@ -186,18 +169,20 @@ def orders_count():
     except Exception:
         return jsonify({"count": 0})
 
+
 @app.route("/api/customers_amount/count")
 def customers_count():
     try:
-            with open("data/customers.json", "r") as file:
-                customers = json.load(file)
-            customer_list = []
-            for customer in customers:
-                customer_list.append(customer(customer_id=customer.get("customer_id"), name=customer.get("name"), address=customer.get("address"),
-                                         phone_number=customer.get('phone_number'), email=customer.get("email"), password=customer.get("password"), credit= customer.get("credit")))
-            return jsonify({"count": len(customer_list)})
+        with open("data/customers.json", "r") as file:
+            customers = json.load(file)
+        customer_list = []
+        for customer in customers:
+            customer_list.append(customer(customer_id=customer.get("customer_id"), name=customer.get("name"), address=customer.get("address"),
+                                          phone_number=customer.get('phone_number'), email=customer.get("email"), password=customer.get("password"), credit=customer.get("credit")))
+        return jsonify({"count": len(customer_list)})
     except FileNotFoundError:
-                   return jsonify({"count": 0})
+        return jsonify({"count": 0})
+
 
 @app.route('/api/deliveries_by_region')
 def get_region_data():
