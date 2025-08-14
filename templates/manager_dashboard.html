@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Manager Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="body.dashboard-page">
+    <h1 class="manager-title">Manager Dashboard</h1>
+
+    <div class="manager-container">
+        <h2 class="section-title">Overview</h2>
+        <div class="overview-boxes">
+            <div class="overview-box lightGray-box">
+                <p>Customers Amount</p>
+                <h3 id="customers_count">12</h3>
+            </div>
+            <div class="overview-box lightGray-box">
+                <p>Orders Amount</p>
+                <h3 id="totalOrders">—</h3>
+            </div>
+        </div>
+        <script>
+            async function updateCustomerCount() {
+                const res = await fetch('/api/customers_amount/count');
+                const data = await res.json();f
+                document.getElementById('customers_count').textContent = data.count;
+            }
+            updateCustomerCount();
+            setInterval(updateCustomerCount, 5000);
+        </script>
+
+        <script>
+            async function updateOrderCount() {
+                const res = await fetch('/api/orders/count');
+                const data = await res.json();
+                document.getElementById('totalOrders').textContent = data.count;
+            }
+            updateOrderCount();
+            setInterval(updateOrderCount, 5000);
+        </script>
+
+
+        <!-- Section: Active Orders -->
+        <h2 class="section-title">Active Orders</h2>
+        <div class="order-list">
+            <div class="order-card">
+                <div class="order-info">
+                    <p class="order-id">Order #QE78901</p>
+                    <p class="order-customer">Sarah J.<br><span class="order-address">123 Main St</span></p>
+                </div>
+                <div class="order-status on-the-way">On the Way<br><span>ETA: 15 min</span></div>
+            </div>
+        </div>
+
+        <!-- Section: Delivery Performance -->
+        <h2 class="section-title">Delivery Performance</h2>
+        <div class="graph-box">
+            <canvas id="deliveriesChart" class="chart-canvas"></canvas>
+            <div class="graph-filters">
+                <button class="filter-button active">Daily</button>
+                <button class="filter-button">Weekly</button>
+                <button class="filter-button">Monthly</button>
+            </div>
+        </div>
+        <!-- Section: Deliveries by Region -->
+        <h2 class="section-title">Delivery Breakdowns</h2>
+        <div class="pie-chart-grid">
+            <div class="pie-chart-box">
+                <canvas id="pie1"></canvas>
+            </div>
+            <div class="pie-chart-box">
+                <canvas id="pie2"></canvas>
+            </div>
+            <div class="pie-chart-box">
+                <canvas id="pie3"></canvas>
+            </div>
+            <div class="pie-chart-box">
+                <canvas id="pie4"></canvas>
+            </div>
+        </div>
+        <!--
+        <script src="{{ url_for('static', filename='js/delivery-charts.js') }}"></script>
+        -->
+        <script>
+            const pieDataList = [
+                {
+                    labels: ["created", "confirmed", "delivered", "canceled", "on-delivery"],
+                    values: [35, 25, 20, 20, 25]
+                },
+                {
+                    labels: ['Tel Aviv', 'Haifa', 'Jerusalem', 'Beer Sheva'],
+                    values: [30, 30, 20, 20]
+                },
+                {
+                    labels: ['Morning', 'Afternoon', 'Evening'],
+                    values: [40, 35, 25]
+                },
+                {
+                    labels: ['Fast', 'Standard', 'Delayed'],
+                    values: [50, 30, 20]
+                }
+            ];
+
+            const pieColors = [
+                'rgba(246, 189, 26, 0.8)', // כתום
+                'rgba(246, 189, 26, 0.5)', // כתום בהיר
+                'rgba(72, 72, 73, 0.7)',   // אפור כהה
+                'rgba(119, 119, 119, 0.4)', // אפור בהיר
+                'rgba(200, 200, 200, 0.6)'
+            ];
+
+
+            pieDataList.forEach((data, index) => {
+                const ctx = document.getElementById(`pie${index + 1}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: pieColors.slice(0, data.values.length),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+        <script>
+            let chart;
+
+            async function fetchDataAndUpdateChart() {
+                const response = await fetch('/api/deliveries');
+                const data = await response.json();
+
+                const labels = data.labels;
+                const values = data.values;
+
+                if (!chart) {
+                    const ctx = document.getElementById('deliveriesChart').getContext('2d');
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Deliveries',
+                                data: values,
+                                backgroundColor: 'rgba(246, 189, 26, 0.2)',
+                                borderColor: '#F6BD1A',
+                                borderWidth: 2,
+                                fill: true,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    chart.data.labels = labels;
+                    chart.data.datasets[0].data = values;
+                    chart.update();
+                }
+            }
+
+            // Run once + every 10 seconds
+            fetchDataAndUpdateChart();
+            setInterval(fetchDataAndUpdateChart, 10000);
+        </script>
+    </div>
+</body>
+
+</html>
