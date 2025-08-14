@@ -163,6 +163,18 @@ def orders_count():
     except Exception:
         return jsonify({"count": 0})
 
+@app.route("/api/customers_amount/count")
+def customers_count():
+    try:
+            with open("data/customers.json", "r") as file:
+                customers = json.load(file)
+            customer_list = []
+            for customer in customers:
+                customer_list.append(customer(customer_id=customer.get("customer_id"), name=customer.get("name"), address=customer.get("address"),
+                                         phone_number=customer.get('phone_number'), email=customer.get("email"), password=customer.get("password"), credit= customer.get("credit")))
+            return jsonify({"count": len(customer_list)})
+    except FileNotFoundError:
+                   return jsonify({"count": 0})
 
 @app.route('/api/deliveries_by_region')
 def get_region_data():

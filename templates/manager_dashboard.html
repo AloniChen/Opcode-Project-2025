@@ -14,20 +14,27 @@
     <h1 class="manager-title">Manager Dashboard</h1>
 
     <div class="manager-container">
-        <!-- תת כותרת -->
         <h2 class="section-title">Overview</h2>
-
-        <!-- בלוקים עם סיכום נתונים -->
         <div class="overview-boxes">
             <div class="overview-box lightGray-box">
-                <p>Active Orders</p>
-                <h3>12</h3>
+                <p>Customers Amount</p>
+                <h3 id="customers_count">12</h3>
             </div>
             <div class="overview-box lightGray-box">
                 <p>Orders Amount</p>
                 <h3 id="totalOrders">—</h3>
             </div>
         </div>
+        <script>
+            async function updateCustomerCount() {
+                const res = await fetch('/api/customers_amount/count');
+                const data = await res.json();f
+                document.getElementById('customers_count').textContent = data.count;
+            }
+            updateCustomerCount();
+            setInterval(updateCustomerCount, 5000);
+        </script>
+
         <script>
             async function updateOrderCount() {
                 const res = await fetch('/api/orders/count');
